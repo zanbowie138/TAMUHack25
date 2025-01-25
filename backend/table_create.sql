@@ -1,6 +1,6 @@
 -- Database: test_db
 
--- DROP DATABASE IF EXISTS test_db;
+DROP DATABASE IF EXISTS test_db;
 
 CREATE DATABASE test_db
     WITH
@@ -22,3 +22,11 @@ CREATE TABLE car_reviews (
     review_rating FLOAT,         -- Rating (e.g., 4.5/5)
     review_date DATE DEFAULT CURRENT_DATE -- Date the review was scraped
 );
+
+CREATE TABLE car_sentiment (
+    review_id INT PRIMARY KEY,       -- Unique identifier for each review
+    sentiment_score FLOAT,         -- Sentiment score of the review
+    sentiment_label VARCHAR(10)     -- Sentiment label (e.g., "positive")
+);
+
+CREATE TABLE
