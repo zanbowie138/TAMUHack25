@@ -27,7 +27,7 @@ export default function CarSelector() {
       })
 
   return (
-    <div className="w-80 h-96 bg-zinc-800 rounded-xl border-slate-50 border-2 p-4 flex flex-col">
+    <div className="w-80 h-96 bg-zinc-800 rounded-xl border-gray-500 border-2 p-4 flex flex-col">
       <div className='mt-auto'>
         <Combobox value={selectedCar} onChange={(value) => setSelectedCar(value ?? cars[0])} onClose={() => setQuery('')}>
           <ComboboxInput
@@ -36,7 +36,7 @@ export default function CarSelector() {
             onChange={(event) => setQuery(event.target.value)}
             className={`w-full h-14 border-2 border-slate-200 rounded-md text-xl text-white p-2`}
           />
-          <ComboboxOptions anchor="bottom" className="border empty:invisible w">
+          <ComboboxOptions anchor="bottom" className="border empty:invisible w-72">
             {filteredCars.map((car) => (
               <ComboboxOption key={car.id} value={car} className="flex gap-2 bg-white data-[focus]:bg-blue-100">
                 {car.name}
