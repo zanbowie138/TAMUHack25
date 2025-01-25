@@ -39,3 +39,5 @@ jspm_packages
 
 # ignore the pgdata folder
 pgdata
+
+backend/processing/.env
