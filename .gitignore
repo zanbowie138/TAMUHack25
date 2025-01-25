@@ -39,3 +39,6 @@ jspm_packages
 
 # ignore the pgdata folder
 pgdata
+
+# ignore personal workspace settings
+.vscode
