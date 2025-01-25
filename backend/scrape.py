@@ -43,9 +43,7 @@ for car in cars:
     for year in years:
 
         url = f"{base_url}/{car}/{year}/consumer-reviews/?pagesize=50"
-        
         car_name = car
-
         car_year = year
 
         driver.get(url)
