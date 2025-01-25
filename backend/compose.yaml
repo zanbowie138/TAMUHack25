@@ -1,0 +1,22 @@
+services:
+  db:
+    container_name: hh_container
+    image: postgres
+    restart: always
+    volumes: 
+      - ./pgdata:/var/lib/postgresql/data
+    ports: 
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "test_db"
+  pgadmin:
+    container_name: hhadmin_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports: 
+      - "5051:80"
