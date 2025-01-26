@@ -35,6 +35,11 @@ def load_car_data(db_params, filepath, table_name):
 
     db.close()
 
+def load_car_summaries(db_params, filepath, table_name):
+    with open(filepath, "rb") as f:
+        data = pickle.load(f)
+    print("Loaded", len(data), "car summaries")
+
 def main():
 
     db_params = {

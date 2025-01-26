@@ -45,3 +45,13 @@ pgdata
 
 # ignore personal workspace settings
 .vscode
+
+.idea
+
+*.pyc
+
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*.py[cod]
+*$py.class

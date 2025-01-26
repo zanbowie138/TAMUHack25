@@ -49,13 +49,23 @@ class Database:
             return None
         finally:
             self.close()
-            
+
+    def get_car_data(self, car, year):
+        try:
+            self.connect()
+            self.cursor.execute("SELECT * FROM cars WHERE car_model = %s AND car_year = %s", (car, year))
+            car_data = self.cursor.fetchone()
+            return car_data
+        except Exception as e:
+            print("Error getting car data:", e)
+            return None
+
     def get_models_and_years(self):
         try:
             self.connect()
-            self.cursor.execute("SELECT DISTINCT model FROM cars")
+            self.cursor.execute("SELECT DISTINCT car_model FROM cars")
             models = [row[0] for row in self.cursor.fetchall()]
-            self.cursor.execute("SELECT DISTINCT year FROM cars")
+            self.cursor.execute("SELECT DISTINCT car_year FROM cars")
             years = [row[0] for row in self.cursor.fetchall()]
             return models, years
         except Exception as e:
