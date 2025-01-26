@@ -1,0 +1,8 @@
+langchain
+langchain-openai
+langchain-community
+openai
+docarray
+pydantic
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0 
