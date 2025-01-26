@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 export default function HeaderContent() {
   return (
-    <div className="bg-[#232323] rounded-[20px] w-3/5 h-16 flex items-center justify-between px-6">
+    <div className="bg-transparent backdrop-blur-md rounded-[20px] w-3/5 h-16 flex items-center justify-between px-6 shadow-lg">
       <a
         href="/"
         className="bg-[#D9D9D9] rounded-[5px] px-9 py-3 font-medium text-black"

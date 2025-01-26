@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation"; 
 import { ChevronRight } from "lucide-react";
-import Navbar from "@/components/Header";
 
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -18,8 +18,6 @@ export default function LandingPage() {
       <div className="fixed inset-0 h-full z-[-1]">
         <img src="/gradient.svg" alt="Gradient" className="object-cover w-full h-full opacity-75" />
       </div>
-
-      <Navbar />
 
       <div className="relative z-10 flex flex-col items-center justify-center text-center pt-30">
         <h1 className="text-[10rem] font-extralight mb-[-60px] text-white leading-tight">Find Your</h1>

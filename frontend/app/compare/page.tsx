@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-//import CarSelector from "./components/CarSelector";
-import Navbar from "@/components/Header";
+import CarSelector from "./components/CarSelector";
+import BlockHeader from "@/components/headers/BlockHeader"
 import Image from "next/image";
 import SelectorGroup from "./components/SelectorGroup";
 import FooterComponent
@@ -16,11 +16,11 @@ export default function Compare() {
           className="object-cover w-full h-full backdrop-opacity-1"
         />
       </div>
-
+      <BlockHeader />
       <div className="relative z-10">
-        <Navbar />
+        
         <div className="w-full items-center justify-center text-center align-center h-20 mt-30 mb-20 text-7xl text-slate-100">
-          Select and Compare
+          Discover and Compare
         </div>
         <SelectorGroup />
         <FooterComponent />
