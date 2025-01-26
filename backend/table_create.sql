@@ -19,10 +19,10 @@ CREATE TABLE cars
     car_model VARCHAR(100) NOT NULL, -- Name of the car (e.g., "Corolla")
     car_year INT NOT NULL,          -- Year of the car (e.g., 2020)
     car_name VARCHAR(150) GENERATED ALWAYS AS (car_model || ' ' || car_year) STORED, -- I am the SQL mastaaahh
-    msrp VARCHAR(150),                      -- Manufacturer's Suggested Retail Price. Varchar because im too lazy to edit the pickle
+    msrp INT,                      -- Manufacturer's Suggested Retail Price. 
     horsepower INT,               -- Horsepower of the car
     mpg INT,                   -- Miles per gallon
-    num_seats VARCHAR(150),               -- Number of seats in the car. Varchar for same reason as msrp
+    num_seats INT,               -- Number of seats in the car.
     drive_type VARCHAR(100), -- Type of drive (e.g., "Front Wheel Drive", "Rear Wheel Drive")
 	UNIQUE (car_name)      -- Ensure car is unique
 );
