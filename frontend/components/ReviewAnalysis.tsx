@@ -44,7 +44,7 @@ export default function ReviewAnalysis({
           {options.map((option) => (
             <button
               key={option}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full border 
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full border
                 ${selectedOption === option 
                   ? 'border-blue-500 text-blue-500' 
                   : 'border-gray-300 hover:border-gray-400'}`}

@@ -14,8 +14,8 @@ from dotenv import load_dotenv
 load_dotenv() # Make sure to have a .env file with OPENAI_API_KEY
 
 # Phoenix setup
-PHOENIX_API_KEY = "772295f1fac643625dd:c7bdae5"
-os.environ["PHOENIX_CLIENT_HEADERS"] = f"api_key=772295f1fac643625dd:c7bdae5"
+PHOENIX_API_KEY = ""
+os.environ["PHOENIX_CLIENT_HEADERS"] = f"api_key="
 os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "https://app.phoenix.arize.com"
 tracer = trace.get_tracer(__name__)
 tracer_provider = register()

@@ -41,6 +41,7 @@ jspm_packages
 pgdata
 
 *.env
+.env
 
 # ignore personal workspace settings
 .vscode
