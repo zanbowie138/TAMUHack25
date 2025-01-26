@@ -120,6 +120,20 @@ class Database:
         finally:
             self.close()
 
+    def add_data_bulk(self, data):
+        try:
+            self.connect()
+            insert_query = sql.SQL("""
+                INSERT INTO cars (car_model, car_year, msrp, horsepower, mpg, num_seats, drive_type)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """)
+            self.cursor.executemany(insert_query, data)
+            self.conn.commit()
+        except Exception as e:
+            print("Error adding data in bulk:", e)
+        finally:
+            self.close()
+
 # db_params = {
 #     "dbname": "test_db",
 #     "user": "postgres",

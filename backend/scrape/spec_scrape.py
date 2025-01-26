@@ -16,6 +16,9 @@ class CarData:
         self.num_seats = num_seats
         self.drive_type = drive_type
 
+    def convert_to_tuple(self):
+        return (self.car_model, self.car_year, self.msrp, self.horsepower, self.mpg, self.num_seats, self.drive_type)
+
     def __str__(self):
         return f"{self.car_model} {self.car_year} - MSRP: {self.msrp}, Horsepower: {self.horsepower}, MPG: {self.mpg}, Seats: {self.num_seats}, Drive Type: {self.drive_type}"
 
