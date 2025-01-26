@@ -1,6 +1,7 @@
 'use client'
 import React from "react";
 import { useRouter } from "next/navigation";
+import { Search } from "lucide-react";
 
 const DetailsComponent = () => {
   const router = useRouter();
@@ -26,23 +27,16 @@ const DetailsComponent = () => {
           <rect x="14" y="14" width="7" height="7" rx="1" />
         </svg>
       ),
-      
     },
     {
-      title: "Finance Page",
-      description: "Explore financing options and calculate payments for your chosen Toyota model.",
+      title: "Explore Page",
+      description: "Discover and search through our comprehensive collection of Toyota models and features.",
       slug: "/explore",
       svg: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
+        <Search 
           className="h-20 w-20 text-gray-200 transition-transform duration-300 group-hover:scale-125"
-        >
-          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-        </svg>
+          strokeWidth={1.5}
+        />
       ),
     },
   ];

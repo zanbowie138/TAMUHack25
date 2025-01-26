@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import { ChevronRight } from "lucide-react";
 import { useRouter } from 'next/navigation';
@@ -5,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 const links = [
-  { name: "Home", path: "/" },
+  { name: "About", path: "/" },
   { name: "Explore", path: "/explore" },
   { name: "Compare", path: "/compare" }
 ];
@@ -13,6 +14,27 @@ const links = [
 export default function HeaderContent() {
   const router = useRouter();
   const pathname = usePathname();
+
+  const handleAboutClick = () => {
+    if (pathname !== '/') {
+      router.push('/');
+      
+      // Delay to ensure page load before scrolling
+      setTimeout(() => {
+        const pageHeight = document.documentElement.scrollHeight;
+        window.scrollTo({ 
+          top: pageHeight / 2, 
+          behavior: "smooth" 
+        });
+      }, 300);
+    } else {
+      const pageHeight = document.documentElement.scrollHeight;
+      window.scrollTo({ 
+        top: pageHeight / 2, 
+        behavior: "smooth" 
+      });
+    }
+  };
 
   return (
     <div className="bg-transparent backdrop-blur-md rounded-[20px] w-3/5 h-16 flex items-center justify-between px-4 shadow-lg">
@@ -25,13 +47,13 @@ export default function HeaderContent() {
 
       <div className="flex space-x-3">
         {links.map((link) => (
-          <Link 
+          <button 
             key={link.path} 
-            href={link.path} 
-            className={`px-3 py-2 rounded-[5px] transition-colors duration-300 ${pathname === link.path ? 'bg-white text-black' : 'hover:bg-[#333333] text-white'}`}
+            onClick={link.name === "About" ? handleAboutClick : () => router.push(link.path)}
+            className={`px-3 py-2 rounded-[5px] transition-colors duration-400 ${pathname === link.path ? 'bg-white text-black' : 'hover:bg-[#333333] text-white'}`}
           >
             {link.name}
-          </Link>
+          </button>
         ))}
       </div>
 

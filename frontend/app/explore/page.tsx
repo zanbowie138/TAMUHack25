@@ -1,22 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Slider from 'rc-slider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 import 'rc-slider/assets/index.css';
+import Header from '@/components/headers/BlockHeader';
+import { useRouter } from 'next/navigation';
+import getImage from '@/utils/get_image';
+import CarTile from './components/CarTile';
 
 interface CarOption {
   model: string;
   price: number;
-  image: string;
   features: string[];
   mpg: string;
   year: number;
   engineType: string;
+  matchScore: number;
 }
 
-export default function BudgetPage() {
+export default function Explore() {
+  const router = useRouter();
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('price-low');
@@ -78,30 +84,24 @@ export default function BudgetPage() {
   useEffect(() => {
     const fetchAllCarData = async () => {
       const carData = [];
-      
-      for (const model of car_models) {
-        for (const year of car_years) {
-          try {
-            const response = await fetch(`http://127.0.0.1:5000/${model}/${year}/data`);
-            const data = await response.json();
-            if (data.car_data) {
-              carData.push({
-                model: data.car_data[1],
-                price: parseInt(data.car_data[4]),
-                features: [],
-                mpg: data.car_data[6] + "", // Default MPG, should be updated with actual data
-                year: parseInt(year),
-                engineType: "Gas", // Default engine type, should be updated with actual data
-                matchScore: 75
-              });
-            }
-          } catch (error) {
-            console.error(`Error fetching data for ${model} ${year}:`, error);
-          }
-        }
+
+      const response = await fetch(`http://127.0.0.1:5000/all_cars`);
+      const data = await response.json();
+      for (const car of data.all_cars) {
+        carData.push({
+          model: car[1],
+          price: parseInt(car[4]),
+          features: [],
+          mpg: car[6] + "", // Default MPG, should be updated with actual data
+          year: car[2],
+          engineType: "Gas", // Default engine type, should be updated with actual data
+          matchScore: 75
+        });
       }
+
       setCars(carData);
     };
+    
 
     fetchAllCarData();
   }, []);
@@ -131,43 +131,26 @@ export default function BudgetPage() {
     .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
     .sort(sortCars);
 
-  const formatPrice = (price: number) => {
-    return `$${price.toLocaleString()}`;
-  };
+  const formatPrice = (price: number) => `$${price.toLocaleString()}`;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100
-      }
-    }
-  };
-
-  const filterVariants = {
-    active: {
-      backgroundColor: "#D1B8E1",
-      scale: 1.02,
-      transition: { type: "spring", stiffness: 300 }
+  const animations = {
+    container: {
+      hidden: { opacity: 0 },
+      visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
     },
-    inactive: {
-      backgroundColor: "#374151",
-      scale: 1
+    item: {
+      hidden: { y: 20, opacity: 0 },
+      visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
+    },
+    filter: {
+      active: { backgroundColor: "#D1B8E1", scale: 1.02, transition: { type: "spring", stiffness: 300 } },
+      inactive: { backgroundColor: "#374151", scale: 1 }
     }
   };
+
+
+
 
   return (
     <motion.div 
@@ -175,14 +158,9 @@ export default function BudgetPage() {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8"
     >
-      <motion.button 
-        whileHover={{ x: -5 }}
-        onClick={() => window.history.back()} 
-        className="flex items-center text-gray-300 hover:text-white mb-8"
-      >
-        <ChevronLeft className="w-5 h-5 mr-1" />
-        Back to Home
-      </motion.button>
+      
+
+      <Header />
 
       <motion.h1 
         initial={{ y: -20, opacity: 0 }}
@@ -219,32 +197,30 @@ export default function BudgetPage() {
             </div>
 
             <div className="mb-8">
-              <h2 className="text-2xl mb-4">Filters</h2>
-              <div className="space-y-2">
-                {filterOptions.map(filter => (
-                  <motion.button
-                    key={filter}
-                    onClick={() => handleFilterToggle(filter)}
-                    variants={filterVariants}
-                    animate={selectedFilters.includes(filter) ? "active" : "inactive"}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`w-full py-2 px-4 rounded ${
-                      selectedFilters.includes(filter)
-                        ? 'bg-[#D1B8E1] text-white'
-                        : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  >
-                    {filter}
-                  </motion.button>
+              <h2 className="text-2xl mb-4">Score Weights</h2>
+              <div className="space-y-4">
+                {Object.entries(scoreWeights).map(([key, value]) => (
+                  <div key={key} className="flex flex-col">
+                    <label className="text-gray-300 mb-1 capitalize">{key}</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={value}
+                      onChange={(e) => setScoreWeights(prev => ({
+                        ...prev,
+                        [key]: parseFloat(e.target.value)
+                      }))}
+                      className="w-full"
+                    />
+                    <span className="text-sm text-gray-400">{value}</span>
+                  </div>
                 ))}
               </div>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
+            <div>
               <h2 className="text-2xl mb-4">Sort By</h2>
               <select
                 value={sortBy}
@@ -255,7 +231,7 @@ export default function BudgetPage() {
                 <option value="price-high">Price: High to Low</option>
                 <option value="mpg">Best MPG</option>
               </select>
-            </motion.div>
+            </div>
           </motion.div>
 
           <div className="lg:col-span-3">
@@ -264,86 +240,18 @@ export default function BudgetPage() {
               animate={{ opacity: 1 }}
               className="mb-4 text-gray-300"
             >
-              {filteredCars.length} vehicles found
+              {cars.length} vehicles found
             </motion.div>
             
             <motion.div 
-              variants={containerVariants}
+              variants={animations.container}
               initial="hidden"
               animate="visible"
               className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
             >
               <AnimatePresence>
-                {filteredCars.map((car) => (
-                  <motion.div 
-                    key={car.model}
-                    variants={itemVariants}
-                    layout
-                    whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
-                    className="bg-gray-700 rounded-lg overflow-hidden shadow-lg"
-                  >
-                    <motion.div 
-                      className="h-48 bg-gray-600 relative"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        {car.model} Image
-                      </div>
-                      <motion.div 
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="absolute top-2 right-2 bg-[#D1B8E1] text-black px-2 py-1 rounded text-sm"
-                      >
-                        {car.year}
-                      </motion.div>
-                    </motion.div>
-                    <div className="p-4">
-                      <h3 className="text-xl font-semibold mb-2">{car.model}</h3>
-                      <p className="text-[#98FB98] text-lg mb-3">{formatPrice(car.price)}</p>
-                      <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex items-center gap-4 mb-3 text-sm text-gray-300"
-                      >
-                        <span>MPG: {car.mpg}</span>
-                        <span>{car.engineType}</span>
-                      </motion.div>
-                      <ul className="text-sm text-gray-300">
-                        {car.features.map((feature, index) => (
-                          <motion.li 
-                            key={index}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="mb-1"
-                          >
-                            • {feature}
-                          </motion.li>
-                        ))}
-                      </ul>
-                      <div className="mt-4 flex gap-2">
-                        <motion.button 
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="flex-1 bg-gradient-to-r from-white to-[#D1B8E1] text-gray-800 py-2 px-4 rounded transition-colors hover:opacity-90"
-                        >
-                          Learn More
-                        </motion.button>
-                        <motion.button 
-                          whileHover={{ 
-                            scale: 1.05, 
-                            background: "linear-gradient(to right, white, #D1B8E1)",
-                            color: "rgb(31, 41, 55)" // dark gray for contrast
-                          }}
-                          whileTap={{ scale: 0.95 }}
-                          className="flex-1 border border-[#D1B8E1] text-[#D1B8E1] py-2 px-4 rounded transition-all"
-                        >
-                          Compare
-                        </motion.button>
-                      </div>
-                    </div>
-                  </motion.div>
+              {filteredCars.map(car => (
+                  <CarTile key={`${car.model}-${car.year}`} car={car} />
                 ))}
               </AnimatePresence>
             </motion.div>
