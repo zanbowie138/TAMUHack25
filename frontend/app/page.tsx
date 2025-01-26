@@ -23,7 +23,7 @@ export default function Home() {
         <div className="fixed inset-0 z-1 opacity-20">
           <PurpleBallsAnimation />
         </div>
-        <div className="fixed inset-0 z-19 opacity-50">
+        <div className="fixed inset-0 z-19 opacity-40">
           <PurpleBallsAnimation />
         </div>
         <div className="fixed inset-0 z-1 opacity-5">
