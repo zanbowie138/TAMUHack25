@@ -1,17 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Slider from 'rc-slider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 import 'rc-slider/assets/index.css';
 import Header from '@/components/headers/BlockHeader';
 import { useRouter } from 'next/navigation';
+import getImage from '@/utils/get_image';
+import { Car } from '@/config/Car';
 
 interface CarOption {
   model: string;
   price: number;
-  image: string;
   features: string[];
   mpg: string;
   year: number;
@@ -34,27 +36,24 @@ export default function BudgetPage() {
 
   const carOptions: CarOption[] = [
     {
-      model: "Toyota Corolla",
+      model: "Corolla",
       price: 21550,
-      image: "/cars/corolla.jpg",
       features: ["Fuel Efficient", "Reliable", "Low Maintenance"],
       mpg: "31/40",
       year: 2024,
       engineType: "Hybrid"
     },
     {
-      model: "Toyota Camry",
+      model: "Camry",
       price: 26420,
-      image: "/cars/camry.jpg",
       features: ["Spacious", "Comfortable", "Advanced Safety"],
       mpg: "24/35",
       year: 2023,
       engineType: "Gasoline"
     },
     {
-      model: "Toyota RAV4",
+      model: "RAV4",
       price: 27575,
-      image: "/cars/rav4.jpg",
       features: ["SUV", "All-Wheel Drive", "Cargo Space"],
       mpg: "22/29",
       year: 2022,
@@ -263,9 +262,12 @@ export default function BudgetPage() {
                       whileHover={{ scale: 1.05 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        {car.model} Image
-                      </div>
+                      <Image
+                        src={getImage(new Car(car.model.toLowerCase(), car.year.toString()))}
+                        alt={`${car.model} Image`}
+                        fill
+                        className="object-contain"
+                      />
                       <motion.div 
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -275,7 +277,7 @@ export default function BudgetPage() {
                       </motion.div>
                     </motion.div>
                     <div className="p-4">
-                      <h3 className="text-xl font-semibold mb-2">{car.model}</h3>
+                      <h3 className="text-xl font-semibold mb-2">Toyota {car.model}</h3>
                       <p className="text-[#98FB98] text-lg mb-3">{formatPrice(car.price)}</p>
                       <motion.div 
                         initial={{ opacity: 0 }}
