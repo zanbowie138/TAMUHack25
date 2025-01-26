@@ -23,6 +23,14 @@ def car_summary(car, year):
 
     if summary: return {"summary": summary}, 200
     else: return {"error": "Summary not found."}, 400
+
+@app.route('/<car>/<year>/data')
+def car_data(car, year):
+    db = Database(db_params)
+    db.connect()
+    car_data = db.get_car_data(car, year)
+    db.close()
+    return {"car_data": car_data}, 200
     
 @app.route('/cars')
 def cars():
