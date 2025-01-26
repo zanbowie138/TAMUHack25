@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Slider from 'rc-slider';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,7 +9,6 @@ import 'rc-slider/assets/index.css';
 import Header from '@/components/headers/BlockHeader';
 import { useRouter } from 'next/navigation';
 import getImage from '@/utils/get_image';
-import { Car } from '@/config/Car';
 import CarTile from './components/CarTile';
 
 interface CarOption {
@@ -21,39 +20,56 @@ interface CarOption {
   engineType: string;
 }
 
-export default function BudgetPage() {
+export default function Explore() {
   const router = useRouter();
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('price-low');
 
+  const car_models = ['prius', 'camry', 'corolla', 'highlander', 'rav4', 'sienna', 'tacoma', 'tundra']
+  const car_years = ['2025', '2024', '2023', '2022', '2021', '2020']
+
+  const [cars, setCars] = useState<CarOption[]>([]);
+
+
+  // Fetch car data for each model and year combination
+  useEffect(() => {
+    const fetchAllCarData = async () => {
+      const carData = [];
+      
+      for (const model of car_models) {
+        for (const year of car_years) {
+          try {
+            const response = await fetch(`http://127.0.0.1:5000/${model}/${year}/data`);
+            const data = await response.json();
+            if (data.car_data) {
+              carData.push({
+                model: data.car_data[1],
+                price: parseInt(data.car_data[2]),
+                features: [],
+                mpg: "30/35", // Default MPG, should be updated with actual data
+                year: parseInt(year),
+                engineType: "Gas" // Default engine type, should be updated with actual data
+              });
+            }
+          } catch (error) {
+            console.error(`Error fetching data for ${model} ${year}:`, error);
+          }
+        }
+      }
+      setCars(carData);
+    };
+
+    fetchAllCarData();
+  }, []);
+
+  useEffect(() => {
+    console.log(cars);
+  }, [cars]);
+
+
   const filterOptions = ['Hybrid/Electric', 'SUV', 'Sedan', 'High MPG', 'Latest Models'];
-  const carOptions: CarOption[] = [
-    {
-      model: "Corolla",
-      price: 21550,
-      features: ["Fuel Efficient", "Reliable", "Low Maintenance"],
-      mpg: "31/40",
-      year: 2024,
-      engineType: "Hybrid"
-    },
-    {
-      model: "Camry", 
-      price: 26420,
-      features: ["Spacious", "Comfortable", "Advanced Safety"],
-      mpg: "24/35",
-      year: 2023,
-      engineType: "Gasoline"
-    },
-    {
-      model: "RAV4",
-      price: 27575,
-      features: ["SUV", "All-Wheel Drive", "Cargo Space"],
-      mpg: "22/29", 
-      year: 2022,
-      engineType: "Gasoline"
-    }
-  ];
+
 
   const handleFilterToggle = (filter: string) => 
     setSelectedFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
@@ -79,10 +95,10 @@ export default function BudgetPage() {
     }
   };
 
-  const filteredCars = carOptions
-    .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
-    .filter(filterCar)
-    .sort(sortCars);
+  // const filteredCars = cars
+  //   .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
+  //   .filter(filterCar)
+  //   .sort(sortCars);
 
   const formatPrice = (price: number) => `$${price.toLocaleString()}`;
 
@@ -193,7 +209,7 @@ export default function BudgetPage() {
               animate={{ opacity: 1 }}
               className="mb-4 text-gray-300"
             >
-              {filteredCars.length} vehicles found
+              {cars.length} vehicles found
             </motion.div>
             
             <motion.div 
@@ -203,7 +219,7 @@ export default function BudgetPage() {
               className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
             >
               <AnimatePresence>
-                {filteredCars.map(CarTile)}
+                {cars.map(CarTile)}
               </AnimatePresence>
             </motion.div>
           </div>

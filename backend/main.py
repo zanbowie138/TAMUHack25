@@ -1,8 +1,10 @@
 from flask import Flask
 from scrape.db import Database
+from flask_cors import CORS
 
 # Create a Flask app
 app = Flask(__name__)
+CORS(app)
 
 db_params = {
         "dbname": "test_db",
