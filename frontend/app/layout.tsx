@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${poppins.variable}`}>
+    <html lang="en" className={`${poppins.variable} scroll-smooth`}>
       <body className="bg-[#1C1C1C] font-poppins">{children}</body>
     </html>
   )
