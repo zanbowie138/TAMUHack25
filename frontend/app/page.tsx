@@ -24,7 +24,7 @@ export default function Home() {
           <FooterComponent />
         </div>
         </div>
-      <div className="relative">
+      <div className="relative"> 
     
         
       </div>
