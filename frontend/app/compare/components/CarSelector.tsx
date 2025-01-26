@@ -34,7 +34,7 @@ export default function CarSelector() {
       })
 
   return (
-    <div className="w-80 h-96 bg-zinc-800 rounded-xl border-gray-500 border-2 p-4 flex flex-col relative">
+    <div className="w-80 h-96 border-0 p-4 flex flex-col relative">
       <div className='absolute top-0 right-0'>
         <X color='#ffffff' strokeWidth={1} className='w-6 h-auto'/>
       </div>
