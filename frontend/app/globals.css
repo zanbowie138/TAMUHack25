@@ -1,10 +1,98 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Satoshi", "sans-serif";
+    --font-display: "Satoshi", "sans-serif";
 }
-
-/* Custom styles for range input */
+.navbar-contact-button-wrapper {
+    position: relative;
+  }
+  
+  .navbar-contact-button-glow {
+    position: absolute;
+    top: -2px;
+    left: -4px;
+    right: -4px;
+    bottom: -2px;
+    background: linear-gradient(
+      45deg,
+      #8a4fff,
+      #6a3ab3,
+      #9c27b0,
+      #7e57c2,
+      #5e35b1,
+      #6a1b9a,
+      #8a4fff
+    );
+    background-size: 400%;
+    z-index: 5;
+    filter: blur(4px); /* Smaller blur for sharper look */
+    border-radius: 5px; /* Matches button's rectangular shape */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .navbar-contact-button-wrapper:hover .navbar-contact-button-glow {
+    opacity: 1;
+    animation: glowing-navbar 15s linear infinite;
+  }
+  
+  @keyframes glowing-navbar {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+  .navbar-contact-button-wrapper {
+    position: relative;
+  }
+  
+  .navbar-contact-button-glow {
+    position: absolute;
+    top: -2px;
+    left: -4px;
+    right: -4px;
+    bottom: -2px;
+    background: linear-gradient(
+      45deg,
+      #8a4fff,
+      #6a3ab3,
+      #9c27b0,
+      #7e57c2,
+      #5e35b1,
+      #6a1b9a,
+      #8a4fff
+    );
+    background-size: 400%;
+    z-index: 5;
+    filter: blur(4px); /* Smaller blur for sharper look */
+    border-radius: 5px; /* Matches button's rectangular shape */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .navbar-contact-button-wrapper:hover .navbar-contact-button-glow {
+    opacity: 1;
+    animation: glowing-navbar 15s linear infinite;
+  }
+  
+  @keyframes glowing-navbar {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+    
+  /* Custom styles for range input */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
