@@ -24,7 +24,7 @@ CREATE TABLE cars
     mpg INT,                   -- Miles per gallon
     num_seats INT,               -- Number of seats in the car.
     drive_type VARCHAR(100), -- Type of drive (e.g., "Front Wheel Drive", "Rear Wheel Drive")
-	UNIQUE (car_name),      -- Ensure car is unique
+	UNIQUE (car_name)      -- Ensure car is unique
 );
 
 CREATE TABLE car_reviews
