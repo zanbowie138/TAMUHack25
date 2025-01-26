@@ -60,6 +60,16 @@ class Database:
             print("Error getting car data:", e)
             return None
 
+    def get_all_car_data(self):
+        try:
+            self.connect()
+            self.cursor.execute("SELECT * FROM cars")
+            car_data = self.cursor.fetchall()
+            return car_data
+        except Exception as e:
+            print("Error getting all car data:", e)
+            return None
+
     def get_models_and_years(self):
         try:
             self.connect()
