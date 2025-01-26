@@ -29,18 +29,18 @@ export default function Dropdown({ car, cars, onChange }: DropdownProps) {
         />
 
         <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-          <ChevronDownIcon className="h-5 w-5 text-white" aria-hidden="true" />
+          <ChevronDownIcon className="h-5 w-5 text-white" />
         </ComboboxButton>
       </div>
       <ComboboxOptions
-        className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-[#222222] py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm custom-scrollbar"
+        className="absolute z-10 mt-1 max-h-60 w-full mr-5 rounded-md bg-[#222222] py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none custom-scrollbar sm:text-sm overflow-y-scroll"
       >
         {filteredCars.map((car, index) => (
           <ComboboxOption
             key={index}
             value={car}
             className={({ active }) =>
-              `relative cursor-default select-none py-2 pl-10 pr-4 ${
+              `relative  py-2 pl-10 pr-4 ${
                 active ? "bg-gray-700 text-white" : "text-gray-300"
               }`
             }

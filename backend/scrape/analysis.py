@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from db import Database
 from scrape import Review
 import pickle
+import os
 
 def get_overall_summary(reviews: List[str]) -> str:
     load_dotenv()
@@ -17,21 +18,20 @@ def get_overall_summary(reviews: List[str]) -> str:
         combined_reviews = combined_reviews[:max_tokens]
     
     # Create prompt for overall summary
-    prompt = f"""Please provide a concise overall summary of these car reviews:
+    prompt = f"""Please provide a concise overall summary of these car reviews. Keep it under 200 words.:
 
             {combined_reviews}
 
             Focus on:
             1. General sentiment
             2. Key themes
-            3. Main pros and cons
             """
 
 
     
     # Get completion from OpenAI
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "user", "content": prompt}
         ],
@@ -54,7 +54,8 @@ def fill_summary_table():
     
     db = Database(db_params)
     db.connect()
-    with open("db.pickle", "rb") as f:
+    script_dir = os.path.dirname(__file__)
+    with open(os.path.join(script_dir, "db.pickle"), "rb") as f:
         reviews = pickle.load(f)
     
     car_reviews = {}
