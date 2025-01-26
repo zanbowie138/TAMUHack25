@@ -77,8 +77,8 @@ export default function SearchBar({ className }: SearchBarProps) {
   }, [highlightedIndex, suggestions])
 
   return (
-    <div className="relative w-full">
-      <form onSubmit={handleSearch} className={`flex ${className}`}>
+    <div className="relative w-3/5">
+      <form onSubmit={handleSearch} className="flex w-full mt-12">
         <input
           ref={inputRef}
           type="text"
@@ -88,12 +88,12 @@ export default function SearchBar({ className }: SearchBarProps) {
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => handleClickOutside(), 200)}
           onKeyDown={handleKeyDown}
-          className="flex-grow px-6 py-4 bg-transparent border border-[#D9D9D9] text-white rounded-l-[5px] text-lg font-medium transition-all duration-300 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/25"
+          className="px-4 py-[1.3rem] flex-grow bg-transparent border border-[#D9D9D9] text-white rounded-l-[5px] text-lg font-medium transition-all duration-300 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/25 "
         />
         <div className="relative group navbar-contact-button-wrapper">
           <button
             type="submit"
-            className="px-[5rem] py-[1.3rem] bg-[#D9D9D9] text-black rounded-r-[5px] text-lg font-medium transition-all duration-300 hover:bg-opacity-80 flex items-center relative z-10"
+            className="px-[5rem] py-[1.3rem] bg-[#D9D9D9] text-black rounded-r-[5px] text-lg font-medium transition-all duration-300 hover:bg-opacity-80 flex items-center justify-center relative z-10"
           >
             Compare Now
             <ChevronRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -103,7 +103,7 @@ export default function SearchBar({ className }: SearchBarProps) {
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute w-full mt-2 bg-[#222222] opacity-100 rounded-md shadow-lg max-h-60 overflow-auto z-50">
+        <div className="absolute w-full mt-2 bg-[#222222] opacity-100 rounded-md shadow-lg h-full overflow-y-auto z-[50] rounded-md border border-white/20">
           {suggestions.map((suggestion, index) => (
             <div
               key={index}
