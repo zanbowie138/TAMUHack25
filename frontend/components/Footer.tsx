@@ -6,7 +6,7 @@ const FooterComponent = () => {
     <footer className="bg-[#1C1C1C] text-gray-200 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col items-center mb-8">
-          <h2 className="text-4xl font-bold mb-4">ToyoFit</h2>
+          <h2 className="text-4xl font-bold mb-4">Kaizen</h2>
           <nav>
             <ul className="flex space-x-6">
               <li>
