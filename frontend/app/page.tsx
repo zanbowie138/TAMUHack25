@@ -43,8 +43,11 @@ export default function Home() {
         </div>
 
         {/* Content layer */}
+        <div className="relative z-31">
+        <FixedHeader />
+        </div>
         <div className="relative z-20">
-          <FixedHeader />
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
