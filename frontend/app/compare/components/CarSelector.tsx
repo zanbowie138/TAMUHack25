@@ -1,8 +1,9 @@
 import SpiderChart from '@/components/SpiderChart';
-import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
-import { X } from 'lucide-react';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
+import { ChevronDownIcon, X } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react'
+import CircularProgress from '@mui/joy/CircularProgress';
 
 // Define the Car type
 interface Car {
@@ -49,23 +50,36 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
       <div className='absolute top-4 right-4'>
         <X color='#ffffff' strokeWidth={1} className='w-6 h-auto'/>
       </div>
+      <div className='absolute top-4 left-4'>
+        <CircularProgress determinate value={75} sx={{"--CircularProgress-trackThickness": "3px","--CircularProgress-progressThickness": "3px"}}>
+          <div className="text-lg font-medium">
+            75
+          </div>
+        </CircularProgress>
+
+      </div>
 
       <Image src={`https://www.toyota.com/imgix/content/dam/toyota/jellies/relative/${selectedCar.year}/${selectedCar.model}/base.png`} alt="Car Image" width={1000} height={1000}/>
-      <div className='w-full grow border-2 border-white rounded-md my-1.5 h-44'>
+      <div className='w-full grow border-2 border-white rounded-md my-1.5 h-32'>
         [ai summary and sparkle]
       </div>
       <div className='mt-auto'>
         <Combobox immediate value={selectedCar} onChange={(value) => setSelectedCar(value ?? cars[0])} onClose={() => setQuery('')}>
-          <ComboboxInput
-            aria-label="Assignee"
-            displayValue={(car: Car) => car?.name}
-            onChange={(event) => setQuery(event.target.value)}
-            className={`w-full h-14 border-2 border-slate-200 rounded-md text-xl text-white p-2`}
-          />
-          <ComboboxOptions anchor="bottom" className="border empty:invisible w-72 mt-1 rounded-md">
+          <div className='relative'>
+            <ComboboxInput
+              aria-label="Assignee"
+              displayValue={(car: Car) => car?.name}
+              onChange={(event) => setQuery(event.target.value)}
+              className={`w-full h-12 rounded-lg border-none bg-white/5 py-1.5 pr-8 pl-3 text-sm/6 text-white 'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
+            />
+            <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
+              <ChevronDownIcon className="size-4 fill-white/60 group-data-[hover]:fill-white" />
+            </ComboboxButton>
+          </div>
+          <ComboboxOptions anchor="bottom" className="w-72 mt-1 rounded-xl border border-white/5 bg-white/5 backdrop-blur-xl p-1 [--anchor-gap:var(--spacing-1)] empty:invisible transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0">
             {filteredCars.map((car) => (
-              <ComboboxOption key={car.id} value={car} className="flex gap-2 bg-gray-800 data-[focus]:bg-gray-900 p-2 opacity-80 hover:opacity-100 text-white backdrop-blur-lg">
-                {car.name}
+              <ComboboxOption key={car.id} value={car} className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10">
+                <div className="text-sm/6 text-white">{car.name}</div>
               </ComboboxOption>
             ))}
           </ComboboxOptions>
