@@ -18,6 +18,27 @@ interface CarSelectorProps {
   totalSelections: number
 }
 
+const initialSentiments = [
+  "performance",
+  "fuel efficiency",
+  "cost",
+  "year"
+]
+class CarData {
+  price: number;
+  mpg: number;
+  horsepower: number;
+  year: number;
+  matchScore: number;
+  constructor(price: number, mpg: number, horsepower: number, year: number, matchScore: number) {
+    this.price = price;
+    this.mpg = mpg;
+    this.horsepower = horsepower;
+    this.year = year;
+    this.matchScore = matchScore;
+  }
+}
+
 export default function CarSelector({
   cars,
   initialCar,
@@ -37,15 +58,50 @@ export default function CarSelector({
     { category: "Technology", value: 84, fullMark: 100 },
     { category: "Handling", value: 100, fullMark: 100 },
   ])
+  const [carData, setCarData] = useState<CarData | null>(null)
+  const [carMatchScore, setCarMatchScore] = useState<number>(0)
 
-  const overallScore = useMemo(
-    () =>
-      Math.round(
-        spiderData.reduce((acc, item) => acc + item.value * (sentimentWeights[item.category.toLowerCase()] || 1), 0) /
-          spiderData.length,
-      ),
-    [spiderData, sentimentWeights],
-  )
+  const searchCar = async (car: Car): Promise<any[]> => {
+    const response = await fetch(`http://127.0.0.1:5000/${car.model}/${car.year}/data`)
+    const data = await response.json()
+    return data.car_data
+  }
+  const calculateMatchScore = (car: CarData) => {
+    const priceScore = 1 - car.price / 40090
+    const mpgScore = Number(car.mpg) / 60
+    const horsepowerScore = car.horsepower / 500
+    const yearScore: number = (car.year - 2020) / 5
+    const weightedScore = priceScore * sentimentWeights["cost"] + mpgScore * sentimentWeights["fuel efficiency"] + yearScore * sentimentWeights["year"] + horsepowerScore * sentimentWeights["performance"]
+    const totalWeight = Object.values(sentimentWeights).reduce((sum, weight) => sum + weight, 0)
+    const normalizedScore = (weightedScore / totalWeight) * 100
+    return Math.round(Math.max(0, Math.min(100, normalizedScore)))
+  }    
+  useEffect(() => {
+    const fetchCarData = async () => {
+      const data = await searchCar(selectedCar)
+      console.log(data)
+      const price = data[4]
+      const mpg = data[6]
+      const horsepower = data[5]
+      const year = data[2]
+      const matchScore = calculateMatchScore(new CarData(price, mpg, horsepower, year, 0))
+      setCarMatchScore(matchScore)
+      setCarData(new CarData(price, mpg, horsepower, year, matchScore))
+    }
+    fetchCarData()
+  }, [selectedCar])
+
+
+  useEffect(() => {
+    console.log("Updating car match score")
+    // const totalScore = spiderData.reduce((sum, item) => sum + item.value, 0)
+    if (carData) {
+      const matchScore = calculateMatchScore(carData)
+      setCarMatchScore(matchScore)
+    }
+  }, [sentimentWeights])
+  const overallScore = carMatchScore!
+
 
     useEffect(() => {
       setSpiderData((prevData) =>
