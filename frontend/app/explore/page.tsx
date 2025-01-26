@@ -34,7 +34,6 @@ export default function Explore() {
   
   // Add score weights state
   const [scoreWeights, setScoreWeights] = useState({
-    base: 0.4,
     price: 0.2,
     mpg: 0.3,
     year: 0.1
@@ -47,11 +46,23 @@ export default function Explore() {
 
   // Updated calculation function
   const calculateMatchScore = (car: CarOption) => {
-    let score = scoreWeights.base;
-    score += (car.price / 50000) * scoreWeights.price; // Normalized price
-    score += (Number(car.mpg) / 60) * scoreWeights.mpg; // Normalized MPG
-    score += ((car.year - 2020) / 5) * scoreWeights.year; // Normalized year
-    return Math.round(score * 100); // Convert to percentage
+    // Normalize each factor to a 0-1 scale
+    const priceScore = 1 - (car.price / 50000); // Lower price is better
+    const mpgScore = Number(car.mpg) / 60; // Higher MPG is better
+    const yearScore = (car.year - 2020) / 5; // Newer year is better
+
+    // Combine scores using weights
+    const weightedScore = (
+      priceScore * scoreWeights.price +
+      mpgScore * scoreWeights.mpg +
+      yearScore * scoreWeights.year
+    );
+
+    // Normalize final score to 0-100 range based on total weights
+    const totalWeight = Object.values(scoreWeights).reduce((sum, weight) => sum + weight, 0);
+    const normalizedScore = (weightedScore / totalWeight) * 100;
+
+    return Math.round(Math.max(0, Math.min(100, normalizedScore))); // Clamp between 0-100
   };
 
   // Add effect to recalculate scores when weights change
