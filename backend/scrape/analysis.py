@@ -64,10 +64,11 @@ def fill_summary_table():
             car_reviews[key] = []
         car_reviews[key].append(review.review_text)
 
-    for car, reviews in car_reviews.items():   
+    for key, reviews in car_reviews.items():
+        car, year = key.split(" ")
         summary = get_overall_summary(reviews)
-        print(f"Summary for {car}: {summary}")
-        db.add_summary(car, summary)
+        # print(f"Summary for {car} {year}: {summary}")
+        db.add_summary(car, year, summary)
         
     db.close()
 
