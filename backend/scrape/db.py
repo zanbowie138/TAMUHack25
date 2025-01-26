@@ -32,6 +32,24 @@ class Database:
         finally:
             self.close()
 
+    def get_summary(self, car, year):
+        try:
+            self.connect()
+            car_string = car + " " + year
+            select = sql.SQL("""
+                SELECT sentiment FROM car_sentiment
+                JOIN cars ON car_sentiment.car_id = cars.car_id
+                WHERE car_string = %s
+            """)
+            self.cursor.execute(select, (car_string,))
+            summary = self.cursor.fetchone()[0]
+            return summary
+        except Exception as e:
+            print("Error getting summary:", e)
+            return None
+        finally:
+            self.close()
+
     def clear_table(self, table_name):
         try:
             self.connect()
@@ -53,6 +71,38 @@ class Database:
             self.conn.commit()
         except Exception as e:
             print("Error adding review:", e)
+        finally:
+            self.close()
+
+    def add_summary(self, car, year, summary):
+        try:
+            self.connect()
+            car_string = car + " " + year
+
+            # Insert into cars if not already present
+            insert = sql.SQL("""
+                INSERT INTO cars (car_string)
+                VALUES (%s)
+                ON CONFLICT DO NOTHING
+            """)
+            self.cursor.execute(insert, (car_string,))
+
+            # Get car_id
+            select = sql.SQL("""
+                SELECT car_id FROM cars WHERE car_string = %s
+            """)
+            self.cursor.execute(select, (car_string,))
+            car_id = self.cursor.fetchone()[0]
+            #
+            insert_query = sql.SQL("""
+                INSERT INTO car_sentiment (car_id, sentiment)
+                VALUES (%s, %s)
+                ON CONFLICT (car_id) DO UPDATE SET sentiment = EXCLUDED.sentiment
+            """)
+            self.cursor.execute(insert_query, (car_id, summary))
+            self.conn.commit()
+        except Exception as e:
+            print("Error adding summary:", e)
         finally:
             self.close()
 
