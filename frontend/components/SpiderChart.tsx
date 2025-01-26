@@ -11,7 +11,7 @@ interface SpiderChartProps {
 
 export default function SpiderChart({ data }: SpiderChartProps) {
   return (
-    <div className="w-full h-[400px] p-4">
+    <div className="w-full h-[250px] p-4">
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
           <PolarGrid />

@@ -1,3 +1,4 @@
+import SpiderChart from '@/components/SpiderChart';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
 import { X } from 'lucide-react';
 import Image from 'next/image';
@@ -22,6 +23,16 @@ for (const model of models) {
   }
 }
 
+const spiderData = [
+  { category: 'Performance', value: 83, fullMark: 100 },
+  { category: 'Fuel Efficiency', value: 80, fullMark: 100 },
+  { category: 'Interior Comfort', value: 83, fullMark: 100 },
+  { category: 'Build Quality', value: 80, fullMark: 100 },
+  { category: 'Safety', value: 83, fullMark: 100 },
+  { category: 'Technology', value: 84, fullMark: 100 },
+  { category: 'Handling', value: 100, fullMark: 100 },
+];
+
 export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: string) => void }) {
   const [selectedCar, setSelectedCar] = useState(cars[0])
   const [query, setQuery] = useState('')
@@ -34,14 +45,13 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
       })
 
   return (
-    <div className="w-80 h-96 border-0 p-4 flex flex-col relative">
-      <div className='absolute top-0 right-0'>
+    <div className="w-80 p-4 flex flex-col relative">
+      <div className='absolute top-4 right-4'>
         <X color='#ffffff' strokeWidth={1} className='w-6 h-auto'/>
       </div>
 
       <Image src={`https://www.toyota.com/imgix/content/dam/toyota/jellies/relative/${selectedCar.year}/${selectedCar.model}/base.png`} alt="Car Image" width={1000} height={1000}/>
-      <div className='w-full text-center text-white'>[review stars]</div>
-      <div className='w-full grow border-2 border-white rounded-md my-1.5'>
+      <div className='w-full grow border-2 border-white rounded-md my-1.5 h-44'>
         [ai summary and sparkle]
       </div>
       <div className='mt-auto'>
@@ -61,6 +71,7 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
           </ComboboxOptions>
         </Combobox>
       </div>
+      <SpiderChart data={spiderData}/>
     </div>
   );
 }

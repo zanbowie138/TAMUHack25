@@ -7,7 +7,6 @@ import LandingPage from "@/components/LandingPage";
 import CarCarousel from "@/components/CarCarousel";
 
 import ReviewAnalysis from "@/components/ReviewAnalysis";
-import SpiderChart from "@/components/SpiderChart";
 
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -100,15 +99,7 @@ export default function Home() {
         return await response.json();
     }
 
-    const spiderData = [
-        { category: 'Performance', value: 83, fullMark: 100 },
-        { category: 'Fuel Efficiency', value: 80, fullMark: 100 },
-        { category: 'Interior Comfort', value: 83, fullMark: 100 },
-        { category: 'Build Quality', value: 80, fullMark: 100 },
-        { category: 'Safety', value: 83, fullMark: 100 },
-        { category: 'Technology', value: 84, fullMark: 100 },
-        { category: 'Handling', value: 100, fullMark: 100 },
-    ];
+
 
   return (
     <SmoothScroll>
@@ -116,10 +107,6 @@ export default function Home() {
         <LandingPage />
         <CarCarousel />
         <section className="relative w-full bg-white">
-          <div className="max-w-7xl mx-auto py-12">
-            <h2 className="text-3xl font-bold text-center mb-8">Model Performance Overview</h2>
-            <SpiderChart data={spiderData} />
-          </div>
           <ReviewAnalysis
             selectedOption={selectedOption}
             reviewData={reviewData}
