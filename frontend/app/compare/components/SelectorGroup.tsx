@@ -1,11 +1,13 @@
-'use client'
-import React, { useState, useCallback, useEffect, Suspense } from "react"
+"use client"
+
+import React, { useState, useCallback, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Plus } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 import CarSelector from "./CarSelector"
 import SentimentFilter from "@/components/SentimentFilter"
-import { Plus } from "lucide-react"
 import { Car } from "@/config/Car"
-import { getCarUrl, getCarFromUrl } from "@/utils/car_url"
-import { useSearchParams } from "next/navigation"
+import { getCarFromUrl } from "@/utils/car_url"
 
 const cars: Car[] = []
 const models = ["prius", "camry", "corolla", "highlander", "rav4", "sienna", "tacoma", "tundra"]
@@ -24,12 +26,13 @@ const initialSentiments = [
   "year"
 ]
 
-function SelectorGroupContent() {
+export default function SelectorGroup() {
   const searchParams = useSearchParams()
   const [selectedCars, setSelectedCars] = useState<Car[]>([])
   const [sentimentWeights, setSentimentWeights] = useState<Record<string, number>>(
     Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, .5]))
   )
+  const [activeFilters, setActiveFilters] = useState<string[]>(["performance", "fuel efficiency", "safety", "technology"])
 
   const searchCar = async (car: Car) => {
     const response = await fetch(`http://127.0.0.1:5000/{car.model}/${car.year}/data`)
@@ -41,7 +44,6 @@ function SelectorGroupContent() {
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString())
     const carsParam = params.get("cars")
-    console.log("carsParam", carsParam)
     if (carsParam) {
       const initialCars = getCarFromUrl(carsParam)
       setSelectedCars(initialCars)
@@ -50,13 +52,11 @@ function SelectorGroupContent() {
     }
   }, [searchParams])
 
-  
-
-  function updateURL() {
-    const url = getCarUrl(selectedCars)
-    console.log(selectedCars)
-    window.history.pushState({}, "", `?cars=${url}`)
-  }
+  // function updateURL() {
+  //   const url = getCarUrl(selectedCars)
+  //   console.log(selectedCars)
+  //   window.history.pushState({}, "", `?cars=${url}`)
+  // }
 
   function handleCarChange(car: Car, index: number) {
     setSelectedCars((prev) => {
@@ -66,16 +66,9 @@ function SelectorGroupContent() {
     })
   }
 
-  useEffect(() => {
-    updateURL()
-  }, [selectedCars])
-
   const addCar = useCallback(() => {
-    if (selectedCars.length < 4) {
-      setSelectedCars((prev) => {
-        const newCars = [...prev, cars[0]]
-        return newCars
-      })
+    if (selectedCars.length < 7) {
+      setSelectedCars((prev) => [...prev, cars[0]])
     }
   }, [selectedCars])
 
@@ -88,46 +81,62 @@ function SelectorGroupContent() {
   }, [])
 
 
+  const handleFilterChange = useCallback((selectedFilters: string[]) => {
+    setActiveFilters(selectedFilters)
+    console.log("Updated active filters:", selectedFilters)
+  }, [])
+
   return (
-    <div className="flex flex-col items-center w-full max-w-7xl mx-auto">
-      <h2 className="text-6xl font-light text-white mb-4">Select and Compare</h2>
-      <p className="text-lg text-gray-300 mb-8 max-w-2xl text-center">
-        Explore and compare up to four different car models side by side. Analyze their features, specifications, and
+    <div className="w-full max-w-[1600px] mx-auto px-4">
+      <h2 className="text-6xl font-light text-white mb-4 text-center">Select and Compare</h2>
+      <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto text-center">
+        Explore and compare up to seven different car models side by side. Analyze their features, specifications, and
         performance in detail.
       </p>
 
-      <SentimentFilter sentiments={initialSentiments} weights={sentimentWeights} onChange={handleSentimentChange} />
+      <SentimentFilter
+        sentiments={initialSentiments}
+        weights={sentimentWeights}
+        onChange={handleSentimentChange}
+        onFilterChange={handleFilterChange}
+      />
 
-      <div className="flex justify-center gap-4 w-full">
-        {selectedCars.map((car, index) => (
-          <div key={index} className={`w-1/${selectedCars.length} min-w-[200px] max-w-[300px] animate-fade-in`}>
-            <CarSelector
-              cars={cars}
-              initialCar={car}
-              onRemove={() => removeCar(index)}
-              sentimentWeights={sentimentWeights}
-              onCarChange={(car) => handleCarChange(car, index)}
-            />
-          </div>
-        ))}
+      <div className="flex flex-wrap justify-center gap-6">
+        <AnimatePresence>
+          {selectedCars.map((car, index) => (
+            <motion.div
+              key={`${car.model}-${car.year}-${index}`}
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              className="w-[calc(25%-1.5rem)] min-w-[280px]"
+            >
+              <CarSelector
+                cars={cars}
+                initialCar={car}
+                onRemove={() => removeCar(index)}
+                sentimentWeights={sentimentWeights}
+                onCarChange={(newCar) => handleCarChange(newCar, index)}
+                totalSelections={selectedCars.length}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
-      {selectedCars.length < 4 && (
-        <button
+      {selectedCars.length < 7 && (
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={addCar}
-          className="mt-8 flex items-center justify-center w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
+          className="mt-8 flex items-center justify-center w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 mx-auto"
         >
           <Plus size={32} color="#ffffff" />
-        </button>
+        </motion.button>
       )}
     </div>
   )
 }
 
-export default function SelectorGroup() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SelectorGroupContent />
-    </Suspense>
-  )
-}
