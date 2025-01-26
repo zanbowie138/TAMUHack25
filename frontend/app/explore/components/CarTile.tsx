@@ -13,6 +13,7 @@ interface CarOption {
   year: number;
   engineType: string;
   matchScore: number;
+  horsepower: number;
 }
 
 interface CarTileProps {

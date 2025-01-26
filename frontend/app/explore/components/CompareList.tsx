@@ -13,6 +13,7 @@ interface Car_Option {
   year: number
   engineType: string
   matchScore: number
+  horsepower: number
 }
 
 const handleCompare = (cars: Car[]) => {

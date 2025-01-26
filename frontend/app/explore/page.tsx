@@ -16,6 +16,7 @@ interface CarOption {
   year: number;
   engineType: string;
   matchScore: number;
+  horsepower: number;
 }
 
 export default function Explore() {
@@ -26,6 +27,7 @@ export default function Explore() {
     price: 0.2,
     mpg: 0.3,
     year: 0.1,
+    power: 0.4,
   });
   const [cars, setCars] = useState<CarOption[]>([]);
 
@@ -40,6 +42,7 @@ export default function Explore() {
       year: car[2],
       engineType: "Gas",
       matchScore: 75,
+      horsepower: car[5],
     }));
     setCars(carData);
   }
@@ -52,10 +55,12 @@ export default function Explore() {
     const priceScore = 1 - car.price / 40090;
     const mpgScore = Number(car.mpg) / 60;
     const yearScore = (car.year - 2020) / 5;
+    const horsepowerScore = car.horsepower / 500;
 
     const weightedScore =
       priceScore * scoreWeights.price +
       mpgScore * scoreWeights.mpg +
+      horsepowerScore * scoreWeights.power +
       yearScore * scoreWeights.year;
 
     const totalWeight = Object.values(scoreWeights).reduce(
