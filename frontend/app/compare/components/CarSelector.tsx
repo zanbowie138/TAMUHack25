@@ -115,7 +115,7 @@ export default function CarSelector({
       whileHover="hover"
       layout
     >
-      <div className="w-full bg-transparent backdrop-blur-md rounded-lg p-2 border border-white/20 z-[1]">
+      <div className="w-full bg-transparent backdrop-blur-md rounded-lg p-2 border border-white/20 z-[100]">
         <Dropdown car={selectedCar} cars={cars} onChange={handleCarChange} />
       </div>
 

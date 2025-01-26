@@ -3,6 +3,7 @@
 import { getCarUrl } from "@/utils/car_url"
 import { Car } from "@/config/Car"
 import { motion } from "framer-motion"
+import { capitalize } from "@/utils/capitalize"
 
 interface Car_Option {
   model: string
@@ -40,7 +41,7 @@ export default function CompareList({ cars, removeCar, clearCars }: { cars: Car_
           key={`${car.model}-${car.year}`}
           className="flex items-center justify-between bg-black bg-opacity-20 p-3 rounded-lg"
         >
-          <span className="text-white">{car.year} {car.model}</span>
+          <span className="text-white">{car.year} Toyota {capitalize(car.model)}</span>
           <button 
             onClick={() => removeCar(car)}
             className="text-gray-400 hover:text-white transition-colors"
