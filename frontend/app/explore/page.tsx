@@ -115,7 +115,7 @@ export default function Explore() {
       }));
       setCars(updatedCars);
     }
-  }, [scoreWeights]);
+  }, [cars, scoreWeights]);
 
   const sortCars = (a: CarOption, b: CarOption) => {
     switch (sortBy) {
