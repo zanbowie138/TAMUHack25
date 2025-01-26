@@ -10,6 +10,7 @@ import Header from '@/components/headers/BlockHeader';
 import { useRouter } from 'next/navigation';
 import getImage from '@/utils/get_image';
 import CarTile from './components/CarTile';
+import FooterComponent from '@/components/Footer';
 
 interface CarOption {
   model: string;
@@ -162,19 +163,19 @@ export default function Explore() {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8"
+      className="min-h-screen bg-[#1C1C1C]"
     >
       
 
       <Header />
 
-      <motion.h1 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="text-4xl font-bold text-center mb-12"
-      >
-        Find Cars Within Your Budget
-      </motion.h1>
+      <motion.h2 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="text-6xl font-light text-white mb-4"
+    >
+      Select and Compare
+    </motion.h2>
       
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -264,6 +265,8 @@ export default function Explore() {
           </div>
         </div>
       </div>
+      <FooterComponent />
     </motion.div>
+    
   );
 } 
