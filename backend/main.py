@@ -42,6 +42,14 @@ def cars():
     db.close()
     return {"models": models, "years": years}, 200
 
+@app.route('/all_cars')
+def all_cars():
+    db = Database(db_params)
+    db.connect()
+    all_cars = db.get_all_car_data()
+    db.close()
+    return {"all_cars": all_cars}, 200
+
 
 
 # Run the server

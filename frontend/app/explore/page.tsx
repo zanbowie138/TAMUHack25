@@ -85,30 +85,24 @@ export default function Explore() {
   useEffect(() => {
     const fetchAllCarData = async () => {
       const carData = [];
-      
-      for (const model of car_models) {
-        for (const year of car_years) {
-          try {
-            const response = await fetch(`http://127.0.0.1:5000/${model}/${year}/data`);
-            const data = await response.json();
-            if (data.car_data) {
-              carData.push({
-                model: data.car_data[1],
-                price: parseInt(data.car_data[4]),
-                features: [],
-                mpg: data.car_data[6] + "", // Default MPG, should be updated with actual data
-                year: parseInt(year),
-                engineType: "Gas", // Default engine type, should be updated with actual data
-                matchScore: 75
-              });
-            }
-          } catch (error) {
-            console.error(`Error fetching data for ${model} ${year}:`, error);
-          }
-        }
+
+      const response = await fetch(`http://127.0.0.1:5000/all_cars`);
+      const data = await response.json();
+      for (const car of data.all_cars) {
+        carData.push({
+          model: car[1],
+          price: parseInt(car[4]),
+          features: [],
+          mpg: car[6] + "", // Default MPG, should be updated with actual data
+          year: car[2],
+          engineType: "Gas", // Default engine type, should be updated with actual data
+          matchScore: 75
+        });
       }
+
       setCars(carData);
     };
+    
 
     fetchAllCarData();
   }, []);
