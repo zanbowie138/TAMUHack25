@@ -1,6 +1,7 @@
-'use client';
+"use client";
 import CarSelector from "./components/CarSelector";
 import SelectorGroup from "./components/SelectorGroup";
+import Header from "@/components/headers/BlockHeader";
 
 /* TODOLIST
 - add selectors with plus and remove selectors with x
@@ -14,8 +15,13 @@ import SelectorGroup from "./components/SelectorGroup";
 export default function Compare() {
   return (
     <>
-      <div className="w-full items-center justify-center text-center align-center h-20 mt-30 mb-20 text-7xl text-slate-100">
+      {/*<Header />*/}
+      {/* <div className="w-full text-center mb-20 text-7xl text-slate-100">
         Compare
+      </div> */}
+      <Header />
+      <div className="w-full text-center mb-20">
+        <h1 className="text-7xl text-slate-100">Select and Compare</h1>
       </div>
       <SelectorGroup />
     </>
