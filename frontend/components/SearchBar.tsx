@@ -103,11 +103,14 @@ export default function SearchBar({ className }: SearchBarProps) {
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute w-full mt-2 bg-[#222222] opacity-100 rounded-md shadow-lg h-max overflow-y-auto z-[50] rounded-md border border-white/20 custom-scrollbar">
+          <div
+          className="scrollable-dropdown absolute w-full bg-[#222222] rounded-md shadow-lg max-h-[200px] z-[50] border border-white/20 overflow-y-auto"
+          onWheel={(e) => e.stopPropagation()}
+        >
           {suggestions.map((suggestion, index) => (
             <div
               key={index}
-              className={`px-4 py-2 cursor-pointer text-white ${
+              className={`px-4 py-2 cursor-pointer text-white text-left ${
                 index === highlightedIndex ? "bg-gray-700" : "hover:bg-gray-700"
               }`}
               onClick={() => handleSuggestionClick(suggestion)}
@@ -116,6 +119,8 @@ export default function SearchBar({ className }: SearchBarProps) {
             </div>
           ))}
         </div>
+        
+        
       )}
     </div>
   )
