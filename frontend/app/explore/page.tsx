@@ -228,6 +228,7 @@ export default function Explore() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="w-full bg-gray-700 text-white py-2 px-4 rounded transition-colors hover:bg-gray-600"
               >
+                <option value="match-score">Best Match</option>
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
                 <option value="mpg">Best MPG</option>

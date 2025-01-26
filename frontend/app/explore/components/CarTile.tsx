@@ -39,6 +39,8 @@ const CarTile = memo(({ car }: CarTileProps) => {
 
     const formatPrice = (price: number) => `$${price.toLocaleString()}`;
 
+    let base_url = "https://www.toyota.com/";
+
     return (
         <motion.div
             variants={animations.item}
@@ -83,6 +85,7 @@ const CarTile = memo(({ car }: CarTileProps) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="flex-1 bg-gradient-to-r from-white to-[#D1B8E1] text-gray-800 py-2 px-4 rounded hover:opacity-90"
+                onClick={() => window.open(`${base_url}${car.model}/${car.year}`, '_blank')}
             >
                 Learn More
             </motion.button>
@@ -90,6 +93,7 @@ const CarTile = memo(({ car }: CarTileProps) => {
                 whileHover={{ scale: 1.05, background: "linear-gradient(to right, white, #D1B8E1)", color: "rgb(31, 41, 55)" }}
                 whileTap={{ scale: 0.95 }}
                 className="flex-1 border border-[#D1B8E1] text-[#D1B8E1] py-2 px-4 rounded"
+                onClick={() => window.open(`/compare?cars=${car.model}-${car.year}`, '_blank')}
             >
                 Compare
             </motion.button>
