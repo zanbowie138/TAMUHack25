@@ -25,15 +25,8 @@ export default function BudgetPage() {
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('price-low');
-  
-  const filterOptions = [
-    'Hybrid/Electric',
-    'SUV',
-    'Sedan',
-    'High MPG',
-    'Latest Models',
-  ];
 
+  const filterOptions = ['Hybrid/Electric', 'SUV', 'Sedan', 'High MPG', 'Latest Models'];
   const carOptions: CarOption[] = [
     {
       model: "Corolla",
@@ -44,7 +37,7 @@ export default function BudgetPage() {
       engineType: "Hybrid"
     },
     {
-      model: "Camry",
+      model: "Camry", 
       price: 26420,
       features: ["Spacious", "Comfortable", "Advanced Safety"],
       mpg: "24/35",
@@ -55,91 +48,108 @@ export default function BudgetPage() {
       model: "RAV4",
       price: 27575,
       features: ["SUV", "All-Wheel Drive", "Cargo Space"],
-      mpg: "22/29",
+      mpg: "22/29", 
       year: 2022,
       engineType: "Gasoline"
-    },
-    // Add more car options as needed
+    }
   ];
 
-  const handleFilterToggle = (filter: string) => {
-    setSelectedFilters(prev => 
-      prev.includes(filter) 
-        ? prev.filter(f => f !== filter)
-        : [...prev, filter]
-    );
+  const handleFilterToggle = (filter: string) => 
+    setSelectedFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
+
+  const filterCar = (car: CarOption) => {
+    if (selectedFilters.length === 0) return true;
+    return selectedFilters.some(filter => {
+      switch(filter) {
+        case 'Hybrid/Electric': return car.engineType === 'Hybrid' || car.engineType === 'Electric';
+        case 'High MPG': return Number(car.mpg.split('/')[0]) > 30;
+        case 'Latest Models': return car.year >= 2024;
+        default: return true;
+      }
+    });
+  };
+
+  const sortCars = (a: CarOption, b: CarOption) => {
+    switch(sortBy) {
+      case 'price-low': return a.price - b.price;
+      case 'price-high': return b.price - a.price;
+      case 'mpg': return Number(b.mpg.split('/')[0]) - Number(a.mpg.split('/')[0]);
+      default: return 0;
+    }
   };
 
   const filteredCars = carOptions
     .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
-    .filter(car => {
-      if (selectedFilters.length === 0) return true;
-      // Add filter logic based on selectedFilters
-      return selectedFilters.some(filter => {
-        switch(filter) {
-          case 'Hybrid/Electric':
-            return car.engineType === 'Hybrid' || car.engineType === 'Electric';
-          case 'High MPG':
-            const [city] = car.mpg.split('/').map(Number);
-            return city > 30;
-          case 'Latest Models':
-            return car.year >= 2024;
-          // Add more filter cases
-          default:
-            return true;
-        }
-      });
-    })
-    .sort((a, b) => {
-      switch(sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'mpg':
-          return Number(b.mpg.split('/')[0]) - Number(a.mpg.split('/')[0]);
-        default:
-          return 0;
-      }
-    });
+    .filter(filterCar)
+    .sort(sortCars);
 
-  const formatPrice = (price: number) => {
-    return `$${price.toLocaleString()}`;
-  };
+  const formatPrice = (price: number) => `$${price.toLocaleString()}`;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100
-      }
-    }
-  };
-
-  const filterVariants = {
-    active: {
-      backgroundColor: "#D1B8E1",
-      scale: 1.02,
-      transition: { type: "spring", stiffness: 300 }
+  const animations = {
+    container: {
+      hidden: { opacity: 0 },
+      visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
     },
-    inactive: {
-      backgroundColor: "#374151",
-      scale: 1
+    item: {
+      hidden: { y: 20, opacity: 0 },
+      visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
+    },
+    filter: {
+      active: { backgroundColor: "#D1B8E1", scale: 1.02, transition: { type: "spring", stiffness: 300 } },
+      inactive: { backgroundColor: "#374151", scale: 1 }
     }
   };
+
+  const renderCarCard = (car: CarOption) => (
+    <motion.div 
+      key={car.model}
+      variants={animations.item}
+      layout
+      whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
+      className="bg-gray-700 rounded-lg overflow-hidden shadow-lg"
+    >
+      <motion.div className="h-48 bg-gray-600 relative" whileHover={{ scale: 1.05 }}>
+        <Image
+          src={getImage(new Car(car.model.toLowerCase(), car.year.toString()))}
+          alt={`${car.model} Image`}
+          fill
+          className="object-contain"
+        />
+        <motion.div className="absolute top-2 right-2 bg-[#D1B8E1] text-black px-2 py-1 rounded text-sm">
+          {car.year}
+        </motion.div>
+      </motion.div>
+      <div className="p-4">
+        <h3 className="text-xl font-semibold mb-2">Toyota {car.model}</h3>
+        <p className="text-[#98FB98] text-lg mb-3">{formatPrice(car.price)}</p>
+        <div className="flex items-center gap-4 mb-3 text-sm text-gray-300">
+          <span>MPG: {car.mpg}</span>
+          <span>{car.engineType}</span>
+        </div>
+        <ul className="text-sm text-gray-300">
+          {car.features.map((feature, index) => (
+            <motion.li key={index} className="mb-1">• {feature}</motion.li>
+          ))}
+        </ul>
+        <div className="mt-4 flex gap-2">
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex-1 bg-gradient-to-r from-white to-[#D1B8E1] text-gray-800 py-2 px-4 rounded hover:opacity-90"
+          >
+            Learn More
+          </motion.button>
+          <motion.button 
+            whileHover={{ scale: 1.05, background: "linear-gradient(to right, white, #D1B8E1)", color: "rgb(31, 41, 55)" }}
+            whileTap={{ scale: 0.95 }}
+            className="flex-1 border border-[#D1B8E1] text-[#D1B8E1] py-2 px-4 rounded"
+          >
+            Compare
+          </motion.button>
+        </div>
+      </div>
+    </motion.div>
+  );
 
   return (
     <motion.div 
@@ -147,7 +157,6 @@ export default function BudgetPage() {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8"
     >
-      
       <motion.button 
         whileHover={{ x: -5 }}
         onClick={() => router.push('/')} 
@@ -200,14 +209,12 @@ export default function BudgetPage() {
                   <motion.button
                     key={filter}
                     onClick={() => handleFilterToggle(filter)}
-                    variants={filterVariants}
+                    variants={animations.filter}
                     animate={selectedFilters.includes(filter) ? "active" : "inactive"}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={`w-full py-2 px-4 rounded ${
-                      selectedFilters.includes(filter)
-                        ? 'bg-[#D1B8E1] text-white'
-                        : 'bg-gray-700 hover:bg-gray-600'
+                      selectedFilters.includes(filter) ? 'bg-[#D1B8E1] text-white' : 'bg-gray-700 hover:bg-gray-600'
                     }`}
                   >
                     {filter}
@@ -216,21 +223,18 @@ export default function BudgetPage() {
               </div>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
+            <div>
               <h2 className="text-2xl mb-4">Sort By</h2>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-gray-700 text-white py-2 px-4 rounded transition-colors hover:bg-gray-600"
+                className="w-full bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-600"
               >
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
                 <option value="mpg">Best MPG</option>
               </select>
-            </motion.div>
+            </div>
           </motion.div>
 
           <div className="lg:col-span-3">
@@ -243,86 +247,13 @@ export default function BudgetPage() {
             </motion.div>
             
             <motion.div 
-              variants={containerVariants}
+              variants={animations.container}
               initial="hidden"
               animate="visible"
               className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
             >
               <AnimatePresence>
-                {filteredCars.map((car) => (
-                  <motion.div 
-                    key={car.model}
-                    variants={itemVariants}
-                    layout
-                    whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
-                    className="bg-gray-700 rounded-lg overflow-hidden shadow-lg"
-                  >
-                    <motion.div 
-                      className="h-48 bg-gray-600 relative"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <Image
-                        src={getImage(new Car(car.model.toLowerCase(), car.year.toString()))}
-                        alt={`${car.model} Image`}
-                        fill
-                        className="object-contain"
-                      />
-                      <motion.div 
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="absolute top-2 right-2 bg-[#D1B8E1] text-black px-2 py-1 rounded text-sm"
-                      >
-                        {car.year}
-                      </motion.div>
-                    </motion.div>
-                    <div className="p-4">
-                      <h3 className="text-xl font-semibold mb-2">Toyota {car.model}</h3>
-                      <p className="text-[#98FB98] text-lg mb-3">{formatPrice(car.price)}</p>
-                      <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex items-center gap-4 mb-3 text-sm text-gray-300"
-                      >
-                        <span>MPG: {car.mpg}</span>
-                        <span>{car.engineType}</span>
-                      </motion.div>
-                      <ul className="text-sm text-gray-300">
-                        {car.features.map((feature, index) => (
-                          <motion.li 
-                            key={index}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="mb-1"
-                          >
-                            • {feature}
-                          </motion.li>
-                        ))}
-                      </ul>
-                      <div className="mt-4 flex gap-2">
-                        <motion.button 
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="flex-1 bg-gradient-to-r from-white to-[#D1B8E1] text-gray-800 py-2 px-4 rounded transition-colors hover:opacity-90"
-                        >
-                          Learn More
-                        </motion.button>
-                        <motion.button 
-                          whileHover={{ 
-                            scale: 1.05, 
-                            background: "linear-gradient(to right, white, #D1B8E1)",
-                            color: "rgb(31, 41, 55)" // dark gray for contrast
-                          }}
-                          whileTap={{ scale: 0.95 }}
-                          className="flex-1 border border-[#D1B8E1] text-[#D1B8E1] py-2 px-4 rounded transition-all"
-                        >
-                          Compare
-                        </motion.button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                {filteredCars.map(renderCarCard)}
               </AnimatePresence>
             </motion.div>
           </div>
@@ -330,4 +261,4 @@ export default function BudgetPage() {
       </div>
     </motion.div>
   );
-} 
+}
