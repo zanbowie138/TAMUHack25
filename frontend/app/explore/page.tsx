@@ -26,7 +26,7 @@ export default function Explore() {
   const router = useRouter();
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState('price-low');
+  const [sortBy, setSortBy] = useState('match-score');
   
   // Add score weights state
   const [scoreWeights, setScoreWeights] = useState({
@@ -43,7 +43,7 @@ export default function Explore() {
   // Updated calculation function
   const calculateMatchScore = (car: CarOption) => {
     // Normalize each factor to a 0-1 scale
-    const priceScore = 1 - (car.price / 50000); // Lower price is better
+    const priceScore = 1 - (car.price / 40090); // Lower price is better
     const mpgScore = Number(car.mpg) / 60; // Higher MPG is better
     const yearScore = (car.year - 2020) / 5; // Newer year is better
 
@@ -123,7 +123,8 @@ export default function Explore() {
     switch(sortBy) {
       case 'price-low': return a.price - b.price;
       case 'price-high': return b.price - a.price;
-      case 'mpg': return Number(b.mpg) - Number(a.mpg);8
+      case 'mpg': return Number(b.mpg) - Number(a.mpg);
+      case 'match-score': return b.matchScore - a.matchScore;
       default: return 0;
     }
   };
@@ -133,7 +134,6 @@ export default function Explore() {
     .sort(sortCars);
 
   const formatPrice = (price: number) => `$${price.toLocaleString()}`;
-
 
   const animations = {
     container: {

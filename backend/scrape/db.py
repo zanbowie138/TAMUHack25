@@ -31,17 +31,26 @@ class Database:
             print("Error testing connection:", e)
         finally:
             self.close()
+            
+    def get_suggestions(self, query):
+        try:
+            self.connect()
+            self.cursor.execute("SELECT car_model, car_year FROM cars WHERE car_model ILIKE %s", (f"%{query}%",))
+            suggestions = [(row[0], row[1]) for row in self.cursor.fetchall()]
+            return suggestions
+        except Exception as e:
+            print("Error getting suggestions:", e)
+            return []
 
     def get_summary(self, car, year):
         try:
             self.connect()
-            car_string = car + " " + year
             select = sql.SQL("""
                 SELECT sentiment FROM car_sentiment
                 JOIN cars ON car_sentiment.car_id = cars.car_id
-                WHERE car_string = %s
+                WHERE car_model = %s AND car_year = %s
             """)
-            self.cursor.execute(select, (car_string,))
+            self.cursor.execute(select, (car, year))
             summary = self.cursor.fetchone()[0]
             return summary
         except Exception as e:
@@ -109,21 +118,20 @@ class Database:
     def add_summary(self, car, year, summary):
         try:
             self.connect()
-            car_string = car + " " + year
 
             # Insert into cars if not already present
             insert = sql.SQL("""
-                INSERT INTO cars (car_string)
-                VALUES (%s)
+                INSERT INTO cars (car_model, car_year)
+                VALUES (%s, %s)
                 ON CONFLICT DO NOTHING
             """)
-            self.cursor.execute(insert, (car_string,))
+            self.cursor.execute(insert, (car, year))
 
             # Get car_id
             select = sql.SQL("""
-                SELECT car_id FROM cars WHERE car_string = %s
+                SELECT car_id FROM cars WHERE car_model = %s AND car_year = %s
             """)
-            self.cursor.execute(select, (car_string,))
+            self.cursor.execute(select, (car, year))
             car_id = self.cursor.fetchone()[0]
             #
             insert_query = sql.SQL("""

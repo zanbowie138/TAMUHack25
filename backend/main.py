@@ -42,6 +42,15 @@ def cars():
     db.close()
     return {"models": models, "years": years}, 200
 
+@app.route('/suggestions/<query>')
+def suggestions(query):
+    db = Database(db_params)
+    db.connect()
+    suggestions = db.get_suggestions(query)
+    print(f"Query: {query}, Suggestions: {suggestions}")
+    db.close()
+    return {"suggestions": suggestions}, 200
+
 @app.route('/all_cars')
 def all_cars():
     db = Database(db_params)
@@ -54,4 +63,8 @@ def all_cars():
 
 # Run the server
 if __name__ == '__main__':
+    # db = Database(db_params)
+    # db.test_connection()
+    # db.close()
+    
     app.run(debug=True)
