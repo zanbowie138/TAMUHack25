@@ -1,11 +1,12 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const links = [
   { name: "Home", path: "/" },
   { name: "Explore", path: "/explore" },
-  { name: "Compare", path: "/compare" }
+  { name: "Placeholder", path: "/compare" }
 ];
 
 export default function HeaderContent() {
@@ -13,16 +14,16 @@ export default function HeaderContent() {
 
   return (
     <div className="bg-transparent backdrop-blur-md rounded-[20px] w-3/5 h-16 flex items-center justify-between px-6 shadow-lg">
-      <a
+      <Link
         href="/"
         className="bg-[#D9D9D9] rounded-[5px] px-9 py-3 font-bold text-black"
       >
         Kaizen
-      </a>
+      </Link>
 
       <div className="flex space-x-8">
         {links.map((link) => (
-          <span key={link.path} className="text-white">{link.name}</span>
+          <Link key={link.path} href={link.path} className="text-white">{link.name}</Link>
         ))}
       </div>
 
