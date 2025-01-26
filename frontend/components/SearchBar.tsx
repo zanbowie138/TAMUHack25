@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { Car } from "@/config/Car";
 
 interface SearchBarProps {
   className?: string;
 }
 
+
 export default function SearchBar({ className }: SearchBarProps) {
   const [searchQuery, setSearchQuery] = useState("")
-  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [suggestions, setSuggestions] = useState<Car[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const router = useRouter()
 
@@ -27,7 +29,8 @@ export default function SearchBar({ className }: SearchBarProps) {
         console.log("Fetching suggestions for:", query)
       const response = await fetch(`http://localhost:5000/suggestions/${query}`)
       const data = await response.json()
-      setSuggestions(data.suggestions)
+      const suggestions = data.suggestions.map((suggestion: any) => new Car(suggestion[0], suggestion[1]))
+      setSuggestions(suggestions)
     } catch (error) {
       console.error("Error fetching suggestions:", error)
       setSuggestions([])
@@ -41,9 +44,10 @@ export default function SearchBar({ className }: SearchBarProps) {
     fetchSuggestions(query)
   }
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchQuery(suggestion)
+  const handleSuggestionClick = (suggestion: Car) => {
+    setSearchQuery(suggestion.displayString())
     setShowSuggestions(false)
+    router.push(`/compare?cars=${suggestion.model.toLowerCase()}-${suggestion.year}`)
   }
 
   const handleClickOutside = () => {
@@ -82,7 +86,7 @@ export default function SearchBar({ className }: SearchBarProps) {
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-800"
               onClick={() => handleSuggestionClick(suggestion)}
             >
-              {suggestion}
+              {suggestion.displayString()}
             </div>
           ))}
         </div>
