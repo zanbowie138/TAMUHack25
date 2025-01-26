@@ -6,13 +6,14 @@ import { Car } from "@/config/Car";
 import { CircularProgress } from "@mui/joy";
 
 interface CarOption {
-  model: string;
-  price: number;
-  features: string[];
-  mpg: string;
-  year: number;
-  engineType: string;
-  matchScore: number;
+    model: string;
+    price: number;
+    features: string[];
+    mpg: string;
+    year: number;
+    horsepower: number;
+    engineType: string;
+    matchScore: number;
 }
 
 interface CarTileProps {
