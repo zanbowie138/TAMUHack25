@@ -64,7 +64,7 @@ export default function CarTile(car: CarOption){
             </motion.div>
         </motion.div>
         <div className="p-4">
-            <h3 className="text-xl font-semibold mb-2">Toyota {car.model}</h3>
+            <h3 className="text-xl font-semibold mb-2">{car.year} Toyota {car.model.charAt(0).toUpperCase() + car.model.slice(1)}</h3>
             <p className="text-[#98FB98] text-lg mb-3">{formatPrice(car.price)}</p>
             <div className="flex items-center gap-4 mb-3 text-sm text-gray-300">
             <span>MPG: {car.mpg}</span>

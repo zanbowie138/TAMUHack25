@@ -52,7 +52,7 @@ export default function Explore() {
                 model: data.car_data[1],
                 price: parseInt(data.car_data[4]),
                 features: [],
-                mpg: 6 + "", // Default MPG, should be updated with actual data
+                mpg: data.car_data[6] + "", // Default MPG, should be updated with actual data
                 year: parseInt(year),
                 engineType: "Gas" // Default engine type, should be updated with actual data
               });
@@ -100,10 +100,10 @@ export default function Explore() {
     }
   };
 
-  // const filteredCars = cars
-  //   .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
-  //   .filter(filterCar)
-  //   .sort(sortCars);
+  const filteredCars = cars
+    .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
+    .filter(filterCar)
+    .sort(sortCars);
 
   const formatPrice = (price: number) => `$${price.toLocaleString()}`;
 
