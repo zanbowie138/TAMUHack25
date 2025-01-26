@@ -22,7 +22,7 @@ for (const model of models) {
   }
 }
 
-export default function CarSelector() {
+export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: string) => void }) {
   const [selectedCar, setSelectedCar] = useState(cars[0])
   const [query, setQuery] = useState('')
 
