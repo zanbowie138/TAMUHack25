@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
-import Navbar from "@/components/Header";
+import Navbar from "@/components/headers/FixedHeader";
 
 export default function LandingPage() {
   return (
