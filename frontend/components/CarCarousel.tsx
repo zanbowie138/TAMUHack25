@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 
 export default function CarCarousel() {
@@ -17,7 +17,7 @@ export default function CarCarousel() {
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden pt-0">
+    <div className="relative w-full overflow-hidden pt-0 pb-15"> 
       <div 
         className="flex transition-transform duration-[50ms] ease-linear" 
         style={{ transform: `translateX(${offset}px)` }}
