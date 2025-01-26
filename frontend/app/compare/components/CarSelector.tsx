@@ -13,9 +13,10 @@ interface CarSelectorProps {
   initialCar: Car
   onRemove: () => void
   sentimentWeights: Record<string, number>
+  onCarChange: (car: Car) => void
 }
 
-export default function CarSelector({ cars, initialCar, onRemove, sentimentWeights }: CarSelectorProps) {
+export default function CarSelector({ cars, initialCar, onRemove, sentimentWeights, onCarChange }: CarSelectorProps) {
   const [selectedCar, setSelectedCar] = useState(initialCar)
   const [query, setQuery] = useState("")
   const [spiderData, setSpiderData] = useState([
@@ -54,12 +55,13 @@ export default function CarSelector({ cars, initialCar, onRemove, sentimentWeigh
   const handleCarChange = (car: Car | null) => {
     if (car) {
       setSelectedCar(car)
+      onCarChange(car)
     }
   }
 
   return (
     <div className="flex flex-col space-y-4">
-      <div className="w-full bg-white/10 backdrop-blur-md rounded-lg p-2 border border-white/20">
+      <div className="w-full bg-white/10 backdrop-blur-md rounded-lg p-2 border border-white/20 z-[1]">
         <Combobox immediate value={selectedCar} onChange={handleCarChange} onClose={() => setQuery("")}>
           <div className="relative">
             <ComboboxInput
@@ -72,7 +74,7 @@ export default function CarSelector({ cars, initialCar, onRemove, sentimentWeigh
               <ChevronDownIcon className="size-4 text-white/60 group-hover:text-white/80" />
             </ComboboxButton>
           </div>
-          <ComboboxOptions className="absolute z-10 w-full mt-1 rounded-lg border border-white/20 bg-white/10 backdrop-blur-md p-1 max-h-60 overflow-auto scrollbar-hide">
+          <ComboboxOptions className="absolute w-full mt-1 rounded-lg border border-white/20 bg-white/10 backdrop-blur-md p-1 max-h-60 overflow-auto scrollbar-hide">
             {filteredCars.map((car, index) => (
               <ComboboxOption
                 key={index}
