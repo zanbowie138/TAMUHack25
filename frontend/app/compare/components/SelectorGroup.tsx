@@ -1,9 +1,11 @@
 "use client"
-import React, { useState, useCallback } from "react"
+import React, { useState, useCallback, useEffect } from "react"
 import CarSelector from "./CarSelector"
 import SentimentFilter from "@/components/SentimentFilter"
 import { Plus } from "lucide-react"
 import { Car } from "@/config/Car"
+import { getCarUrl, getCarFromUrl } from "@/utils/car_url"
+import { useSearchParams } from "next/navigation"
 
 const cars: Car[] = []
 const models = ["prius", "camry", "corolla", "highlander", "rav4", "sienna", "tacoma", "tundra"]
@@ -26,14 +28,48 @@ const initialSentiments = [
 ]
 
 export default function SelectorGroup() {
+  const searchParams = useSearchParams()
   const [selectedCars, setSelectedCars] = useState<Car[]>([])
   const [sentimentWeights, setSentimentWeights] = useState<Record<string, number>>(
     Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, 1])),
   )
 
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams)
+    const carsParam = params.get('cars')
+    console.log("carsParam", carsParam)
+    if (carsParam) {
+      const initialCars = getCarFromUrl(carsParam)
+      setSelectedCars(initialCars)
+    } else {
+      setSelectedCars([cars[0]])
+    }
+  }, [])
+  
+  function updateURL() {
+    const url = getCarUrl(selectedCars)
+    console.log(selectedCars)
+    window.history.pushState({}, '', `?cars=${url}`)
+  }
+
+  function handleCarChange(car: Car, index: number) {
+    setSelectedCars(prev => {
+      const newCars = [...prev]
+      newCars[index] = car
+      return newCars
+    })
+  }
+
+  useEffect(() => {
+    updateURL()
+  }, [selectedCars])
+
   const addCar = useCallback(() => {
     if (selectedCars.length < 4) {
-      setSelectedCars((prev) => [...prev, cars[0]])
+      setSelectedCars((prev) => {
+        const newCars = [...prev, cars[0]]
+        return newCars
+      })
     }
   }, [selectedCars])
 
@@ -63,6 +99,7 @@ export default function SelectorGroup() {
               initialCar={car}
               onRemove={() => removeCar(index)}
               sentimentWeights={sentimentWeights}
+              onCarChange={(car) => handleCarChange(car, index)}
             />
           </div>
         ))}
