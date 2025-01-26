@@ -1,9 +1,6 @@
-"use client"
-import type React from "react"
-import { useState } from "react"
-import { ChevronRight } from "lucide-react"
-import Navbar from "@/components/Header"
-import { useRouter } from "next/navigation"
+import React from "react";
+import { ChevronRight } from "lucide-react";
+import Navbar from "@/components/Header";
 
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("")
