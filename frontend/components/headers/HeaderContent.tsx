@@ -8,7 +8,7 @@ export default function HeaderContent() {
         href="/"
         className="bg-[#D9D9D9] rounded-[5px] px-9 py-3 font-medium text-black"
       >
-        ToyoFit
+        Kaizen
       </a>
 
       <div className="flex space-x-8">
