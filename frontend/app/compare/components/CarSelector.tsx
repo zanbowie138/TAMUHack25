@@ -52,11 +52,8 @@ export default function CarSelector({
   const [spiderData, setSpiderData] = useState([
     { category: "Performance", value: 83, fullMark: 100 },
     { category: "Fuel Efficiency", value: 80, fullMark: 100 },
-    { category: "Interior Comfort", value: 83, fullMark: 100 },
-    { category: "Build Quality", value: 80, fullMark: 100 },
-    { category: "Safety", value: 83, fullMark: 100 },
-    { category: "Technology", value: 84, fullMark: 100 },
-    { category: "Handling", value: 100, fullMark: 100 },
+    { category: "Cost", value: 83, fullMark: 100 },
+    { category: "Year", value: 80, fullMark: 100 },
   ])
   const [carData, setCarData] = useState<CarData | null>(null)
   const [carMatchScore, setCarMatchScore] = useState<number>(0)
@@ -84,6 +81,12 @@ export default function CarSelector({
       const mpg = data[6]
       const horsepower = data[5]
       const year = data[2]
+      setSpiderData([
+        { category: "Cost", value: (1 - price / 40090) * 100, fullMark: 100 },
+        { category: "Year", value: ((year-2020)/5) * 100, fullMark: 100 },
+        { category: "Performance", value: (horsepower / 500) * 100, fullMark: 100 },
+        { category: "Fuel Efficiency", value: (mpg / 60) * 100, fullMark: 100 },
+      ])
       const matchScore = calculateMatchScore(new CarData(price, mpg, horsepower, year, 0))
       setCarMatchScore(matchScore)
       setCarData(new CarData(price, mpg, horsepower, year, matchScore))
