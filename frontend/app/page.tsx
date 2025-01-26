@@ -12,6 +12,7 @@ import DetailsComponent from "@/components/Details"
 import FooterComponent from "@/components/Footer"
 import FixedHeader from "@/components/headers/FixedHeader"
 import Gradient from "/public/gradient.svg"
+import PurpleBallsAnimation from "@/components/PurpleBallsAnimation"
 
 export default function Home() {
   return (
@@ -19,7 +20,16 @@ export default function Home() {
       <div className="min-h-screen relative overflow-hidden font-poppins">
         {/* Background color layer */}
         <div className="fixed inset-0 z-0 bg-[#1C1C1C]"></div>
-
+        <div className="fixed inset-0 z-1 opacity-20">
+          <PurpleBallsAnimation />
+        </div>
+        <div className="fixed inset-0 z-19 opacity-40">
+          <PurpleBallsAnimation />
+        </div>
+        <div className="fixed inset-0 z-1 opacity-5">
+          <PurpleBallsAnimation />
+        </div>
+        
         {/* Gradient layer */}
         <div className="fixed inset-0 z-10">
           <Image
@@ -42,11 +52,13 @@ export default function Home() {
           >
             <LandingPage />
           </motion.div>
+        </div>
+        <div className="relative z-30">
           <CarCarousel />
           <AboutSection />
           <DetailsComponent />
           <FooterComponent />
-        </div>
+          </div>
       </div>
     </SmoothScroll>
   )

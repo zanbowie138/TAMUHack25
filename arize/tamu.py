@@ -1,11 +1,28 @@
 import os
+import pandas as pd
+import phoenix as px
+import numpy as np
+from getpass import getpass
 from typing import List, Dict
 from langchain_openai import OpenAI, OpenAIEmbeddings
-from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 from pydantic.v1 import BaseModel, Field
+from openinference.instrumentation.guardrails import GuardrailsInstrumentor
+from guardrails import Guard
+import guardrails.hub
 from phoenix.otel import register
+from phoenix.evals import (
+    HallucinationEvaluator,
+    HALLUCINATION_PROMPT_RAILS_MAP,
+    HALLUCINATION_PROMPT_TEMPLATE,
+    OpenAIModel,
+    QAEvaluator,
+    download_benchmark_dataset,
+    llm_classify,
+    run_evals,
+)
+from phoenix.trace import SpanEvaluations
 from openinference.instrumentation.openai import OpenAIInstrumentor
 from openinference.semconv.trace import SpanAttributes, OpenInferenceSpanKindValues
 from opentelemetry import trace
@@ -17,7 +34,6 @@ from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.schema import AIMessage, HumanMessage
-
 load_dotenv() # Make sure to have a .env file with OPENAI_API_KEY
 
 # Phoenix setup with better tracing
@@ -29,6 +45,7 @@ os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "https://app.phoenix.arize.com"
 tracer = trace.get_tracer("car_review_analyzer")
 tracer_provider = register()
 OpenAIInstrumentor().instrument(tracer_provider=tracer_provider)
+GuardrailsInstrumentor().instrument(tracer_provider=tracer_provider)
 
 # OpenAI setup
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -412,9 +429,143 @@ class CarReviewSystem:
     def format_output(self, result: ReviewAnalysis) -> str:
         return format_analysis_result(result)
 
+def evaluate_hallucinations(df, model):
+    # Prepare the rails for hallucination classification
+    rails = list(HALLUCINATION_PROMPT_RAILS_MAP.values())
+    
+    # Perform hallucination classification
+    hallucination_classifications = llm_classify(
+        data=df, 
+        template=HALLUCINATION_PROMPT_TEMPLATE, 
+        model=model, 
+        rails=rails,
+        provide_explanation=True,  # Optional to generate explanations for the value produced by the eval LLM
+        input=df['question']
+    )
+    
+    return hallucination_classifications
+
+def evaluate_correctness(df, model):
+    qa_evaluator = QAEvaluator(model)
+    
+    # Assuming df has 'question' and 'answer' columns
+    correctness_results = qa_evaluator.evaluate(data=df, input=df['question'])
+    
+    return correctness_results
+    
+
+    # Evaluate hallucinations
+    #hallucination_results = evaluate_hallucinations(df, model)
+    #print("Hallucination Evaluation Results:", hallucination_results)
+
+    # Evaluate correctness
+    #correctness_results = evaluate_correctness(df, model)
+    #print("Correctness Evaluation Results:", correctness_results)
+    
 # Example usage
 if __name__ == "__main__":
+   # main()
     system = CarReviewSystem()
+    df = pd.DataFrame(
+    [
+        {
+            "reference": "The Toyota Camry is known for its reliability and fuel efficiency. It has been one of the best-selling cars in the United States for many years.",
+            "query": "What is the Toyota Camry known for?",
+            "response": "The Toyota Camry is known for its reliability and fuel efficiency.",
+        },
+        {
+            "reference": "The Toyota RAV4 is a compact SUV that offers a spacious interior and advanced safety features. It is popular among families for its versatility.",
+            "query": "What type of vehicle is the Toyota RAV4?",
+            "response": "The Toyota RAV4 is a compact SUV.",
+        },
+        {
+            "reference": "The Toyota Corolla is one of the best-selling cars worldwide. It is praised for its affordability, fuel efficiency, and low maintenance costs.",
+            "query": "Why is the Toyota Corolla popular?",
+            "response": "The Toyota Corolla is popular for its affordability, fuel efficiency, and low maintenance costs.",
+        },
+        {
+            "reference": "The Toyota Highlander is a midsize SUV that offers three rows of seating and a comfortable ride. It is equipped with advanced technology and safety features.",
+            "query": "What is the seating capacity of the Toyota Highlander?",
+            "response": "The Toyota Highlander can seat up to eight passengers.",
+        },
+        {
+            "reference": "The Toyota Tacoma is a midsize pickup truck known for its off-road capabilities and durability. It is a favorite among outdoor enthusiasts.",
+            "query": "What is the Toyota Tacoma known for?",
+            "response": "The Toyota Tacoma is known for its off-road capabilities and durability.",
+        },
+        {
+            "reference": "The Toyota Prius is a hybrid vehicle that is recognized for its exceptional fuel economy and eco-friendliness. It has become a symbol of green driving.",
+            "query": "What is the fuel efficiency of the Toyota Prius?",
+            "response": "The Toyota Prius is known for its exceptional fuel efficiency, often achieving over 50 mpg.",
+        },
+        {
+            "reference": "The Toyota Sienna is a minivan that offers a spacious interior and family-friendly features. It is the only minivan in its class to offer all-wheel drive.",
+            "query": "What makes the Toyota Sienna unique among minivans?",
+            "response": "The Toyota Sienna is unique for being the only minivan in its class to offer all-wheel drive.",
+        },
+        {
+            "reference": "The Toyota 4Runner is an SUV that is built for off-road adventures. It features a rugged design and advanced off-road technology.",
+            "query": "What type of driving is the Toyota 4Runner designed for?",
+            "response": "The Toyota 4Runner is designed for off-road driving.",
+        },
+        {
+            "reference": "The Toyota Avalon is a full-size sedan that offers a luxurious interior and a smooth ride. It is known for its spaciousness and comfort.",
+            "query": "What is the Toyota Avalon known for?",
+            "response": "The Toyota Avalon is known for its luxurious interior and smooth ride.",
+        },
+        {
+            "reference": "The Toyota Land Cruiser is a full-size SUV that is renowned for its off-road capabilities and durability. It is often used for both luxury and rugged adventures.",
+            "query": "What is the Toyota Land Cruiser used for?",
+            "response": "The Toyota Land Cruiser is used for both luxury travel and off-road adventures.",
+        },
+    ]
+)
+
+# Display the first few rows of the DataFrame
+    print(df.head())
+
+    
+    eval_model = OpenAIModel(model="gpt-4o")
+    hallucination_evaluator = HallucinationEvaluator(eval_model)
+    qa_evaluator = QAEvaluator(eval_model)
+    
+    df["context"] = df["reference"]
+    df.rename(columns={"query": "input", "response": "output"}, inplace=True)
+    assert all(column in df.columns for column in ["output", "input", "context", "reference"])
+    
+    hallucination_eval_df = run_evals(
+    dataframe=df, evaluators=[hallucination_evaluator], provide_explanation=True
+    )
+    
+    qa_correctness_eval_df = run_evals(
+    dataframe=df, evaluators=[qa_evaluator], provide_explanation=True
+    )
+    
+    print(hallucination_eval_df)
+    print(qa_correctness_eval_df)
+    # Assuming qa_correctness_eval_df is a 3D NumPy array
+# Reshape it to 2D if necessary
+#    qa_correctness_eval_df = np.array(qa_correctness_eval_df)
+#    qa_correctness_eval_df = np.array(qa_correctness_eval_df)
+#    qa_correctness_eval_df = qa_correctness_eval_df.reshape(-1, 3)
+#    qa_correctness_eval_df = pd.DataFrame(qa_correctness_eval_df)
+
+    
+    px.Client().log_evaluations(
+        SpanEvaluations(
+            dataframe=qa_correctness_eval_df,
+            eval_name="Q&A Correctness",
+        ),
+        #DocumentEvaluations(
+        #    dataframe=document_relevance_eval_df,
+        #    eval_name="Relevance",
+        #),
+        SpanEvaluations(
+            dataframe=hallucination_eval_df,
+            eval_name="Hallucination",
+        ),
+
+    )
     
     # Example reviews with clear sentiment
     sample_reviews = [
@@ -433,9 +584,11 @@ if __name__ == "__main__":
     
     # Have a conversation
     print("\n=== Conversational Document QA ===")
-    
+    guard = Guard().use(
+    TwoWords(),
+)
     # First question
-    response = system.chat("What are the main safety features mentioned in the reviews?")
+    response = guard(system.chat("What are the main safety features mentioned in the reviews?"))
     print("\nQ: What are the main safety features mentioned in the reviews?")
     print(f"A: {response}")
     

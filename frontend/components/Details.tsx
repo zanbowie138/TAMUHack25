@@ -50,7 +50,7 @@ const DetailsComponent = () => {
             onClick={() => router.push(page.slug)}
             className="flex-1 flex flex-col items-center justify-center p-8 cursor-pointer relative group"
           >
-            <div className="absolute inset-0 bg-pink-200 opacity-0 transition-opacity duration-300 group-hover:opacity-10 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-[#a783ae] opacity-0 transition-opacity duration-300 group-hover:opacity-10 pointer-events-none"></div>
             {page.svg}
             <h2 className="text-3xl font-bold mt-6 relative z-10">{page.title}</h2>
             <p className="text-center mt-4 text-base relative z-10">{page.description}</p>
