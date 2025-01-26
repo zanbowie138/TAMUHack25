@@ -45,3 +45,7 @@ pgdata
 
 # ignore personal workspace settings
 .vscode
+
+.idea
+
+*.pyc
