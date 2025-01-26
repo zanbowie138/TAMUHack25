@@ -31,7 +31,7 @@ const DetailsComponent = () => {
     {
       title: "Finance Page",
       description: "Explore financing options and calculate payments for your chosen Toyota model.",
-      slug: "/budget",
+      slug: "/explore",
       svg: (
         <svg
           xmlns="http://www.w3.org/2000/svg"

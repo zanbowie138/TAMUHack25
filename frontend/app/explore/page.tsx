@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Slider from 'rc-slider';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,6 +10,7 @@ import Header from '@/components/headers/BlockHeader';
 import { useRouter } from 'next/navigation';
 import getImage from '@/utils/get_image';
 import CarTile from './components/CarTile';
+import Loading from './components/loading';
 
 interface CarOption {
   model: string;
@@ -26,6 +27,33 @@ interface CarOption {
 // 3. auto adjust match score based on preference filter
 
 export default function Explore() {
+  const router = useRouter();
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8"
+    >
+      <motion.button 
+        whileHover={{ x: -5 }}
+        onClick={() => router.push('/')} 
+        className="absolute top-8 left-8 flex items-center text-gray-300 hover:text-white"
+      >
+        <ChevronLeft className="w-5 h-5 mr-1" />
+        Back to Home
+      </motion.button>
+
+      <Header />
+
+      <Suspense fallback={<Loading />}>
+        <ExploreContent />
+      </Suspense>
+    </motion.div>
+  );
+}
+
+function ExploreContent() {
   const router = useRouter();
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -123,22 +151,7 @@ export default function Explore() {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8"
-    >
-      <motion.button 
-        whileHover={{ x: -5 }}
-        onClick={() => router.push('/')} 
-        className="absolute top-8 left-8 flex items-center text-gray-300 hover:text-white"
-      >
-        <ChevronLeft className="w-5 h-5 mr-1" />
-        Back to Home
-      </motion.button>
-
-      <Header />
-
+    <>
       <motion.h1 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -230,6 +243,6 @@ export default function Explore() {
           </div>
         </div>
       </div>
-    </motion.div>
+    </>
   );
 }
