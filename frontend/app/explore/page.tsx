@@ -164,14 +164,7 @@ export default function Explore() {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8"
     >
-      <motion.button 
-        whileHover={{ x: -5 }}
-        onClick={() => router.push('/')} 
-        className="absolute top-8 left-8 flex items-center text-gray-300 hover:text-white"
-      >
-        <ChevronLeft className="w-5 h-5 mr-1" />
-        Back to Home
-      </motion.button>
+      
 
       <Header />
 
