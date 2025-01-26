@@ -1,28 +1,32 @@
-import { memo } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-import getImage from "@/utils/get_image"
-import { Car } from "@/config/Car"
-import { CircularProgress } from "@mui/joy"
+import { memo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import getImage from "@/utils/get_image";
+import { Car } from "@/config/Car";
+import { CircularProgress } from "@mui/joy";
 
 interface CarOption {
-  model: string
-  price: number
-  features: string[]
-  mpg: string
-  year: number
-  engineType: string
-  matchScore: number
+  model: string;
+  price: number;
+  features: string[];
+  mpg: string;
+  year: number;
+  engineType: string;
+  matchScore: number;
 }
 
 interface CarTileProps {
-  car: CarOption
-  className?: string
+  car: CarOption;
+  className?: string;
+  isSelected: boolean;
+  onCompare: (car: CarOption) => void;
 }
 
 const CarTile = memo(
-  ({ car }: CarTileProps) => {
-    console.log(`Rendering CarTile for ${car.model} with score ${car.matchScore}`)
+  ({ car, isSelected, onCompare }: CarTileProps) => {
+    console.log(
+      `Rendering CarTile for ${car.model} with score ${car.matchScore}`,
+    );
 
     const animations = {
       container: {
@@ -59,11 +63,11 @@ const CarTile = memo(
       button: {
         tap: { scale: 0.95 },
       },
-    }
+    };
 
-    const formatPrice = (price: number) => `$${price.toLocaleString()}`
+    const formatPrice = (price: number) => `$${price.toLocaleString()}`;
 
-    const base_url = "https://www.toyota.com/"
+    const base_url = "https://www.toyota.com/";
 
     return (
       <motion.div
@@ -74,7 +78,10 @@ const CarTile = memo(
         layout
         className="bg-[#1C1C1C] rounded-lg overflow-hidden shadow-lg"
       >
-        <motion.div className="h-48 bg-[#262527] relative" variants={animations.image}>
+        <motion.div
+          className="h-48 bg-[#262527] relative"
+          variants={animations.image}
+        >
           <div className="absolute top-4 left-4">
             <CircularProgress
               determinate
@@ -85,11 +92,16 @@ const CarTile = memo(
                 "--CircularProgress-progressColor": "#D1B8E1",
               }}
             >
-              <div className="text-lg font-medium text-white">{car.matchScore}</div>
+              <div className="text-lg font-medium text-white">
+                {car.matchScore}
+              </div>
             </CircularProgress>
           </div>
           <Image
-            src={getImage(new Car(car.model.toLowerCase(), car.year.toString())) || "/placeholder.svg"}
+            src={
+              getImage(new Car(car.model.toLowerCase(), car.year.toString())) ||
+              "/placeholder.svg"
+            }
             alt={`${car.model} Image`}
             fill
             className="object-contain"
@@ -102,7 +114,9 @@ const CarTile = memo(
           <h4 className="text-2xl font-semibold mb-2 text-white">
             Toyota {car.model.charAt(0).toUpperCase() + car.model.slice(1)}
           </h4>
-          <p className="text-[#98FB98] text-lg mb-3">{formatPrice(car.price)}</p>
+          <p className="text-[#98FB98] text-lg mb-3">
+            {formatPrice(car.price)}
+          </p>
           <div className="flex items-center gap-4 mb-3 text-sm text-gray-300">
             <span>MPG: {car.mpg}</span>
             <span>{car.engineType}</span>
@@ -129,30 +143,46 @@ const CarTile = memo(
               whileTap="tap"
               variants={animations.button}
               className="flex-1 bg-gradient-to-r from-[#1C1C1C] to-[#262527] text-white py-2 px-4 rounded hover:opacity-90"
-              onClick={() => window.open(`${base_url}${car.model}/${car.year}`, "_blank")}
+              onClick={() =>
+                window.open(`${base_url}${car.model}/${car.year}`, "_blank")
+              }
             >
               Learn More
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.05, background: "linear-gradient(to right, #1C1C1C, #262527)" }}
+              whileHover={{
+                scale: 1.05,
+              }}
               whileTap="tap"
               variants={animations.button}
-              className="flex-1 border border-[#D1B8E1] text-[#D1B8E1] py-2 px-4 rounded"
-              onClick={() => window.open(`/compare?cars=${car.model}-${car.year}`, "_blank")}
+              className={`flex-1 py-2 px-4 rounded ${
+                isSelected
+                  ? "border border-[#38ff26] text-[#38ff26]"
+                  : "border border-[#D1B8E1] text-[#D1B8E1]"
+              }`}
+              onClick={() => onCompare(car)}    
             >
-              Compare
+              {isSelected ? "Remove" : "Compare"}
             </motion.button>
           </div>
         </div>
       </motion.div>
-    )
+    );
   },
   (prevProps, nextProps) => {
-    return JSON.stringify(prevProps.car) === JSON.stringify(nextProps.car)
+    return (
+      prevProps.car.model === nextProps.car.model &&
+      prevProps.car.price === nextProps.car.price &&
+      prevProps.car.mpg === nextProps.car.mpg &&
+      prevProps.car.year === nextProps.car.year &&
+      prevProps.car.engineType === nextProps.car.engineType &&
+      prevProps.car.matchScore === nextProps.car.matchScore &&
+      prevProps.isSelected === nextProps.isSelected &&
+      JSON.stringify(prevProps.car.features) === JSON.stringify(nextProps.car.features)
+    );
   },
-)
+);
 
-CarTile.displayName = "CarTile"
+CarTile.displayName = "CarTile";
 
-export default CarTile
-
+export default CarTile;

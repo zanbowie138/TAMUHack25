@@ -42,9 +42,9 @@ function SelectorGroupContent() {
       const initialCars = getCarFromUrl(carsParam)
       setSelectedCars(initialCars)
     } else {
-      setSelectedCars([cars[0]])
+      setSelectedCars([])
     }
-  }, [searchParams])
+  }, [])
 
   function updateURL() {
     const url = getCarUrl(selectedCars)
