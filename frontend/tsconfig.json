@@ -31,7 +31,13 @@
       ],
       "@/api/*": [
         "api/*"
-      ]
+      ],
+      "@/config/*": [
+        "config/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
     },
     "target": "ES2017"
   },
