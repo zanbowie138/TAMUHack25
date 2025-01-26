@@ -1,7 +1,8 @@
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 import getImage from '@/utils/get_image';
 import { Car } from '@/config/Car';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
 import { CircularProgress } from '@mui/joy';
 
 interface CarOption {
@@ -11,13 +12,16 @@ interface CarOption {
     mpg: string;
     year: number;
     engineType: string;
+    matchScore: number;
 }
 
+interface CarTileProps {
+    car: CarOption;
+}
 
+const CarTile = memo(({ car }: CarTileProps) => {
+    console.log(`Rendering CarTile for ${car.model} with score ${car.matchScore}`);
 
-
-
-export default function CarTile(car: CarOption){
     const animations = {
         container: {
             hidden: { opacity: 0 },
@@ -36,21 +40,20 @@ export default function CarTile(car: CarOption){
     const formatPrice = (price: number) => `$${price.toLocaleString()}`;
 
     return (
-        <motion.div 
-        key={car.model}
-        variants={animations.item}
-        layout
-        whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
+        <motion.div
+            variants={animations.item}
+            layout
+            whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
         className="bg-gray-700 rounded-lg overflow-hidden shadow-lg"
         >
         <motion.div className="h-48 bg-gray-600 relative" whileHover={{ scale: 1.05 }}>
             <div className="absolute top-4 left-4">
                 <CircularProgress
                 determinate
-                value={75}
+                value={car.matchScore}
                 sx={{ "--CircularProgress-trackThickness": "3px", "--CircularProgress-progressThickness": "3px", "--CircularProgress-progressColor": "#D1B8E1" }}
                 >
-                    <div className="text-lg font-medium text-white">75</div>
+                    <div className="text-lg font-medium text-white">{car.matchScore}</div>
                 </CircularProgress>
             </div>
             <Image
@@ -94,4 +97,10 @@ export default function CarTile(car: CarOption){
         </div>
         </motion.div>
     );
-}
+}, (prevProps, nextProps) => {
+    return JSON.stringify(prevProps.car) === JSON.stringify(nextProps.car);
+});
+
+CarTile.displayName = 'CarTile';
+
+export default CarTile;
