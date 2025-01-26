@@ -58,7 +58,9 @@ export default function Home() {
         </div>
         <div className="relative z-30">
           <CarCarousel />
+          <div className="relative"><div id="about" className="absolute -top-[30px] left-0"></div></div>
           <AboutSection />
+          
           <DetailsComponent />
           <FooterComponent />
           </div>

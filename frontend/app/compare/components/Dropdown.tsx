@@ -40,7 +40,7 @@ export default function Dropdown({ car, cars, onChange }: DropdownProps) {
             key={index}
             value={car}
             className={({ active }) =>
-              `relative  py-2 pl-10 pr-4 ${
+              `relative cursor-default select-none py-2 pl-10 pr-4 ${
                 active ? "bg-gray-700 text-white" : "text-gray-300"
               }`
             }
