@@ -21,7 +21,7 @@ export default function SentimentFilter({ sentiments, weights, onChange }: Senti
                 type="range"
                 id={sentiment}
                 min={0}
-                max={2}
+                max={1}
                 step={0.1}
                 value={weights[sentiment]}
                 onChange={(e) => onChange(sentiment, Number.parseFloat(e.target.value))}

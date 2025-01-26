@@ -20,19 +20,23 @@ for (const model of models) {
 const initialSentiments = [
   "performance",
   "fuel efficiency",
-  "interior comfort",
-  "build quality",
-  "safety",
-  "technology",
-  "handling",
+  "cost",
+  "year"
 ]
 
 function SelectorGroupContent() {
   const searchParams = useSearchParams()
   const [selectedCars, setSelectedCars] = useState<Car[]>([])
   const [sentimentWeights, setSentimentWeights] = useState<Record<string, number>>(
-    Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, 1]))
+    Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, .5]))
   )
+
+  const searchCar = async (car: Car) => {
+    const response = await fetch(`http://127.0.0.1:5000/{car.model}/${car.year}/data`)
+    const data = await response.json()
+    console.log(data, car)
+    return data
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString())
@@ -45,6 +49,8 @@ function SelectorGroupContent() {
       setSelectedCars([cars[0]])
     }
   }, [searchParams])
+
+  
 
   function updateURL() {
     const url = getCarUrl(selectedCars)
@@ -80,6 +86,7 @@ function SelectorGroupContent() {
   const handleSentimentChange = useCallback((sentiment: string, value: number) => {
     setSentimentWeights((prev) => ({ ...prev, [sentiment]: value }))
   }, [])
+
 
   return (
     <div className="flex flex-col items-center w-full max-w-7xl mx-auto">
