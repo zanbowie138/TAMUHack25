@@ -1,14 +1,14 @@
 import { capitalize } from "@/utils/capitalize";
 
-export class Car {
+export class CarData {
   model: string;
-  year: string;
+  year: number;
   price: number;
   mpg: number;
   horsepower: number;
   matchScore: number;
 
-  constructor(model: string, year: string, price: number = 0, mpg: number = 0, horsepower: number = 0, matchScore: number = 0) {
+  constructor(model: string, year: number, price: number = 0, mpg: number = 0, horsepower: number = 0, matchScore: number = 0) {
     this.model = model;
     this.year = year;
     this.price = price;

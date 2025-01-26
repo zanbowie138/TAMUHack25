@@ -47,14 +47,14 @@ export default function CarSelector({
     [spiderData, sentimentWeights],
   )
 
-  useEffect(() => {
-    setSpiderData((prevData) =>
-      prevData.map((item) => ({
-        ...item,
-        value: Math.min(item.value * (sentimentWeights[item.category.toLowerCase()] || 1), 100),
-      })),
-    )
-  }, [sentimentWeights])
+    useEffect(() => {
+      setSpiderData((prevData) =>
+        prevData.map((item) => ({
+          ...item,
+          value: Math.min(item.value * (sentimentWeights[item.category.toLowerCase()] || 1), 100),
+        })),
+      )
+    }, [sentimentWeights])
 
   const handleCarChange = (car: Car) => {
     setSelectedCar(car)

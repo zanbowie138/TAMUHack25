@@ -22,20 +22,24 @@ for (const model of models) {
 const initialSentiments = [
   "performance",
   "fuel efficiency",
-  "safety",
-  "interior comfort",
-  "build quality",
-  "technology",
-  "handling",
+  "cost",
+  "year"
 ]
 
 export default function SelectorGroup() {
   const searchParams = useSearchParams()
   const [selectedCars, setSelectedCars] = useState<Car[]>([])
   const [sentimentWeights, setSentimentWeights] = useState<Record<string, number>>(
-    Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, 1])),
+    Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, .5]))
   )
   const [activeFilters, setActiveFilters] = useState<string[]>(["performance", "fuel efficiency", "safety", "technology"])
+
+  const searchCar = async (car: Car) => {
+    const response = await fetch(`http://127.0.0.1:5000/{car.model}/${car.year}/data`)
+    const data = await response.json()
+    console.log(data, car)
+    return data
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString())
@@ -48,13 +52,19 @@ export default function SelectorGroup() {
     }
   }, [])
 
-  const handleCarChange = useCallback((car: Car, index: number) => {
+  // function updateURL() {
+  //   const url = getCarUrl(selectedCars)
+  //   console.log(selectedCars)
+  //   window.history.pushState({}, "", `?cars=${url}`)
+  // }
+
+  function handleCarChange(car: Car, index: number) {
     setSelectedCars((prev) => {
       const newCars = [...prev]
       newCars[index] = car
       return newCars
     })
-  }, [])
+  }
 
   const addCar = useCallback(() => {
     if (selectedCars.length < 7) {
@@ -69,6 +79,7 @@ export default function SelectorGroup() {
   const handleSentimentChange = useCallback((sentiment: string, value: number) => {
     setSentimentWeights((prev) => ({ ...prev, [sentiment]: value }))
   }, [])
+
 
   const handleFilterChange = useCallback((selectedFilters: string[]) => {
     setActiveFilters(selectedFilters)
