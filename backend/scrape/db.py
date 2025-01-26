@@ -53,10 +53,10 @@ class Database:
     def get_models_and_years(self):
         try:
             self.connect()
-            self.cursor.execute("SELECT DISTINCT model FROM cars")
-            models = [row[0] for row in self.cursor.fetchall()]
-            self.cursor.execute("SELECT DISTINCT year FROM cars")
-            years = [row[0] for row in self.cursor.fetchall()]
+            self.cursor.execute("SELECT DISTINCT car_string FROM cars")
+            car_strings = [row[0] for row in self.cursor.fetchall()]
+            models = list(set(car_string.split()[0] for car_string in car_strings))
+            years = list(set(car_string.split()[1] for car_string in car_strings))
             return models, years
         except Exception as e:
             print("Error getting models and years:", e)
