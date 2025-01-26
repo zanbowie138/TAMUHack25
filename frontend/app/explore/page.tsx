@@ -41,7 +41,6 @@ export default function Explore() {
       mpg: car[6] + "",
       year: car[2],
       horsepower: car[5],
-      engineType: "Gas",
       matchScore: 0,
     }));
     setCars(carData);
