@@ -1,8 +1,14 @@
 import React from "react";
+import { useRouter } from "next/navigation"; // Import for routing
 import { ChevronRight } from "lucide-react";
 import SearchBar from "./SearchBar";
 
 export default function LandingPage() {
+  const router = useRouter();
+
+  const handleExploreModels = () => {
+    router.push("/explore");
+  };
 
   return (
     <main className="min-h-screen relative overflow-hidden font-poppins">
@@ -26,7 +32,7 @@ export default function LandingPage() {
         <div className="mt-12 flex justify-center">
           <div className="relative group landingpage-contact-button-wrapper">
             <button
-              onClick={() => {}}
+              onClick={handleExploreModels}
               className="px-[5rem] py-[1.3rem] bg-transparent border border-[#D9D9D9] text-white rounded-[5px] text-lg font-medium transition-all duration-300 hover:bg-white hover:text-black hover:scale-103 group"
             >
               Explore Models

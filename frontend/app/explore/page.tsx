@@ -10,6 +10,7 @@ import Header from '@/components/headers/BlockHeader';
 import { useRouter } from 'next/navigation';
 import getImage from '@/utils/get_image';
 import CarTile from './components/CarTile';
+import FooterComponent from '@/components/Footer';
 
 interface CarOption {
   model: string;
@@ -25,7 +26,7 @@ export default function Explore() {
   const router = useRouter();
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState('price-low');
+  const [sortBy, setSortBy] = useState('match-score');
   
   // Add score weights state
   const [scoreWeights, setScoreWeights] = useState({
@@ -42,7 +43,7 @@ export default function Explore() {
   // Updated calculation function
   const calculateMatchScore = (car: CarOption) => {
     // Normalize each factor to a 0-1 scale
-    const priceScore = 1 - (car.price / 50000); // Lower price is better
+    const priceScore = 1 - (car.price / 40090); // Lower price is better
     const mpgScore = Number(car.mpg) / 60; // Higher MPG is better
     const yearScore = (car.year - 2020) / 5; // Newer year is better
 
@@ -122,7 +123,8 @@ export default function Explore() {
     switch(sortBy) {
       case 'price-low': return a.price - b.price;
       case 'price-high': return b.price - a.price;
-      case 'mpg': return Number(b.mpg) - Number(a.mpg);8
+      case 'mpg': return Number(b.mpg) - Number(a.mpg);
+      case 'match-score': return b.matchScore - a.matchScore;
       default: return 0;
     }
   };
@@ -132,7 +134,6 @@ export default function Explore() {
     .sort(sortCars);
 
   const formatPrice = (price: number) => `$${price.toLocaleString()}`;
-
 
   const animations = {
     container: {
@@ -156,19 +157,19 @@ export default function Explore() {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8"
+      className="min-h-screen bg-[#1C1C1C]"
     >
       
 
       <Header />
 
-      <motion.h1 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="text-4xl font-bold text-center mb-12"
-      >
-        Find Cars Within Your Budget
-      </motion.h1>
+      <motion.h2 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="text-6xl font-light text-white mb-4"
+    >
+      Explore Cars in Your Budget
+    </motion.h2>
       
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -227,6 +228,7 @@ export default function Explore() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="w-full bg-gray-700 text-white py-2 px-4 rounded transition-colors hover:bg-gray-600"
               >
+                <option value="match-score">Best Match</option>
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
                 <option value="mpg">Best MPG</option>
@@ -258,6 +260,8 @@ export default function Explore() {
           </div>
         </div>
       </div>
+      <FooterComponent />
     </motion.div>
+    
   );
 } 
