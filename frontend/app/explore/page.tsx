@@ -137,7 +137,7 @@ export default function Explore() {
                     <Slider
                       range
                       min={15000}
-                      max={100000}
+                      max={50000}
                       step={1000}
                       value={priceRange}
                       onChange={(value: number | number[]) => setPriceRange(value as number[])}
