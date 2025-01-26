@@ -15,9 +15,7 @@ export default function Dropdown({ car, cars, onChange }: DropdownProps) {
   const filteredCars =
     query === ""
       ? cars
-      : cars.filter((car) => {
-          return car.model.toLowerCase().includes(query.toLowerCase());
-        });
+      : cars.filter((car) => car.model.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <Combobox immediate value={car} onChange={onChange || (() => {})} onClose={() => setQuery("")}>
@@ -33,7 +31,8 @@ export default function Dropdown({ car, cars, onChange }: DropdownProps) {
         </ComboboxButton>
       </div>
       <ComboboxOptions
-        className="absolute z-10 mt-1 max-h-60 w-full mr-5 rounded-md bg-[#222222] py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none custom-scrollbar sm:text-sm overflow-y-scroll"
+        className="absolute z-10 mt-1 max-h-60 w-full rounded-md bg-[#222222] py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none custom-scrollbar sm:text-sm overflow-y-auto"
+        onWheel={(e) => e.stopPropagation()} // Prevent parent scroll interference
       >
         {filteredCars.map((car, index) => (
           <ComboboxOption
@@ -47,8 +46,10 @@ export default function Dropdown({ car, cars, onChange }: DropdownProps) {
           >
             {({ selected, active }) => (
               <>
-                <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>{car.string()}</span>
-                {selected ? (
+                <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
+                  {car.string()}
+                </span>
+                {selected && (
                   <span
                     className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
                       active ? "text-white" : "text-gray-400"
@@ -56,7 +57,7 @@ export default function Dropdown({ car, cars, onChange }: DropdownProps) {
                   >
                     <CheckIcon className="h-5 w-5" aria-hidden="true" />
                   </span>
-                ) : null}
+                )}
               </>
             )}
           </ComboboxOption>

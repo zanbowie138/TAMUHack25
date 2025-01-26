@@ -42,10 +42,26 @@ export default function Explore() {
       year: car[2],
       horsepower: car[5],
       engineType: "Gas",
-      matchScore: 75,
+      matchScore: 0,
     }));
     setCars(carData);
   }
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setScoreWeights({
+        price: 0.2,
+        mpg: 0.3,
+        year: 0.1,
+        power: 0.4,
+      });
+    }, 1000);
+
+    // Cleanup to avoid memory leaks if the component unmounts before timeout
+    return () => clearTimeout(timer);
+  }, []);
+
+
 
   useEffect(() => {
     fetchAllCarData();
