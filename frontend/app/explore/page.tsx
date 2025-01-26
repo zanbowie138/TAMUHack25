@@ -168,7 +168,7 @@ export default function Explore() {
       animate={{ y: 0, opacity: 1 }}
       className="text-6xl font-light text-white mb-4"
     >
-      Select and Compare
+      Explore Cars in Your Budget
     </motion.h2>
       
       <div className="max-w-6xl mx-auto">
