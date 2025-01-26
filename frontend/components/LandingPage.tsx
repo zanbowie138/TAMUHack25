@@ -26,7 +26,7 @@ export default function LandingPage() {
           key features, and pricing options tailored to your needs
         </p>
 
-        <SearchBar className="mt-12 w-3/5 mx-auto" />
+        <SearchBar className="mt-12 w-3/5" />
 
         <div className="mt-12 flex justify-center">
           <div className="relative group landingpage-contact-button-wrapper">
