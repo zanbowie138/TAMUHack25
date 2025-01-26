@@ -66,7 +66,7 @@ export default function CarCarousel() {
               whileHover={isCurrentCard ? { scale: 1.05 } : {}}
             >
               <div className="p-4 text-white">
-                <h3 className="text-xl font-bold capitalize">{cars[index].model}</h3>
+                <h3 className="text-xl font-bold capitalize">Toyota {cars[index].model}</h3>
                 <p className="text-gray-400">{cars[index].year}</p>
               </div>
               <img 
