@@ -7,7 +7,7 @@ import Link from 'next/link';
 const links = [
   { name: "Home", path: "/" },
   { name: "Explore", path: "/explore" },
-  { name: "Comparison", path: "/compare" }
+  { name: "Compare", path: "/compare" }
 ];
 
 export default function HeaderContent() {

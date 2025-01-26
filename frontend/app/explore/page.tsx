@@ -21,85 +21,115 @@ export default function BudgetPage() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('price-low');
   
-  const filterOptions = [
-    'Hybrid/Electric',
-    'SUV',
-    'Sedan',
-    'High MPG',
-    'Latest Models',
-  ];
+  // Add score weights state
+  const [scoreWeights, setScoreWeights] = useState({
+    price: 0.2,
+    mpg: 0.3,
+    year: 0.1
+  });
 
-  const carOptions: CarOption[] = [
-    {
-      model: "Toyota Corolla",
-      price: 21550,
-      image: "/cars/corolla.jpg",
-      features: ["Fuel Efficient", "Reliable", "Low Maintenance"],
-      mpg: "31/40",
-      year: 2024,
-      engineType: "Hybrid"
-    },
-    {
-      model: "Toyota Camry",
-      price: 26420,
-      image: "/cars/camry.jpg",
-      features: ["Spacious", "Comfortable", "Advanced Safety"],
-      mpg: "24/35",
-      year: 2023,
-      engineType: "Gasoline"
-    },
-    {
-      model: "Toyota RAV4",
-      price: 27575,
-      image: "/cars/rav4.jpg",
-      features: ["SUV", "All-Wheel Drive", "Cargo Space"],
-      mpg: "22/29",
-      year: 2022,
-      engineType: "Gasoline"
-    },
-    // Add more car options as needed
-  ];
+  const car_models = ['prius', 'camry', 'corolla', 'highlander', 'rav4', 'sienna', 'tacoma', 'tundra'];
+  const car_years = ['2025', '2024', '2023', '2022', '2021', '2020'];
 
-  const handleFilterToggle = (filter: string) => {
-    setSelectedFilters(prev => 
-      prev.includes(filter) 
-        ? prev.filter(f => f !== filter)
-        : [...prev, filter]
+  const [cars, setCars] = useState<CarOption[]>([]);
+
+  // Updated calculation function
+  const calculateMatchScore = (car: CarOption) => {
+    // Normalize each factor to a 0-1 scale
+    const priceScore = 1 - (car.price / 50000); // Lower price is better
+    const mpgScore = Number(car.mpg) / 60; // Higher MPG is better
+    const yearScore = (car.year - 2020) / 5; // Newer year is better
+
+    // Combine scores using weights
+    const weightedScore = (
+      priceScore * scoreWeights.price +
+      mpgScore * scoreWeights.mpg +
+      yearScore * scoreWeights.year
     );
+
+    // Normalize final score to 0-100 range based on total weights
+    const totalWeight = Object.values(scoreWeights).reduce((sum, weight) => sum + weight, 0);
+    const normalizedScore = (weightedScore / totalWeight) * 100;
+
+    return Math.round(Math.max(0, Math.min(100, normalizedScore))); // Clamp between 0-100
   };
 
-  const filteredCars = carOptions
-    .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
-    .filter(car => {
-      if (selectedFilters.length === 0) return true;
-      // Add filter logic based on selectedFilters
-      return selectedFilters.some(filter => {
-        switch(filter) {
-          case 'Hybrid/Electric':
-            return car.engineType === 'Hybrid' || car.engineType === 'Electric';
-          case 'High MPG':
-            const [city] = car.mpg.split('/').map(Number);
-            return city > 30;
-          case 'Latest Models':
-            return car.year >= 2024;
-          // Add more filter cases
-          default:
-            return true;
+  // Add effect to recalculate scores when weights change
+  useEffect(() => {
+    if (cars.length > 0) {
+      console.log('Recalculating scores with weights:', scoreWeights);
+      const updatedCars = cars.map(car => ({
+        ...car,
+        matchScore: calculateMatchScore(car)
+      }));
+      setCars(updatedCars);
+    }
+  }, [scoreWeights]); // Remove cars.length dependency to prevent potential loops
+
+  // Add a debug log for cars updates
+  useEffect(() => {
+    console.log('Cars updated:', cars.map(car => ({
+      model: car.model,
+      score: car.matchScore
+    })));
+  }, [cars]);
+
+  // Fetch car data for each model and year combination
+  useEffect(() => {
+    const fetchAllCarData = async () => {
+      const carData = [];
+      
+      for (const model of car_models) {
+        for (const year of car_years) {
+          try {
+            const response = await fetch(`http://127.0.0.1:5000/${model}/${year}/data`);
+            const data = await response.json();
+            if (data.car_data) {
+              carData.push({
+                model: data.car_data[1],
+                price: parseInt(data.car_data[4]),
+                features: [],
+                mpg: data.car_data[6] + "", // Default MPG, should be updated with actual data
+                year: parseInt(year),
+                engineType: "Gas", // Default engine type, should be updated with actual data
+                matchScore: 75
+              });
+            }
+          } catch (error) {
+            console.error(`Error fetching data for ${model} ${year}:`, error);
+          }
         }
-      });
-    })
-    .sort((a, b) => {
-      switch(sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'mpg':
-          return Number(b.mpg.split('/')[0]) - Number(a.mpg.split('/')[0]);
-        default:
-          return 0;
       }
-    });
+      setCars(carData);
+    };
+
+    fetchAllCarData();
+  }, []);
+
+  useEffect(() => {
+    console.log(cars);
+  }, [cars]);
+
+
+  const filterOptions = ['Hybrid/Electric', 'SUV', 'Sedan', 'High MPG', 'Latest Models'];
+
+
+  const handleFilterToggle = (filter: string) => 
+    setSelectedFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
+
+
+  const sortCars = (a: CarOption, b: CarOption) => {
+    switch(sortBy) {
+      case 'price-low': return a.price - b.price;
+      case 'price-high': return b.price - a.price;
+      case 'mpg': return Number(b.mpg) - Number(a.mpg);8
+      default: return 0;
+    }
+  };
+
+  const filteredCars = cars
+    .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
+    .sort(sortCars);
 
   const formatPrice = (price: number) => {
     return `$${price.toLocaleString()}`;

@@ -11,10 +11,13 @@ export default function Compare() {
         <div className="fixed inset-0 h-full z-0">
           <img src="/gradient.svg" alt="Gradient" className="object-cover w-full h-full backdrop-opacity-1" />
         </div>
+
         <BlockHeader />
+
         <div className="relative z-10 container mx-auto px-4 py-8">
           <SelectorGroup />
         </div>
+        
         <FooterComponent />
       </main>
     </SmoothScroll>
