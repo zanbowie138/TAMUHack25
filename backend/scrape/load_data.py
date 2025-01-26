@@ -1,5 +1,6 @@
 import pickle
-from backend.db import Database
+from db import Database
+from scrape import Review
 
 
 def load_data(db_params, filepath):
