@@ -6,13 +6,14 @@ import { motion } from "framer-motion"
 import { capitalize } from "@/utils/capitalize"
 
 interface Car_Option {
-  model: string
-  price: number
-  features: string[]
-  mpg: string
-  year: number
-  engineType: string
-  matchScore: number
+  model: string;
+  price: number;
+  features: string[];
+  mpg: string;
+  year: number;
+  horsepower: number;
+  engineType: string;
+  matchScore: number;
 }
 
 const handleCompare = (cars: Car[]) => {
