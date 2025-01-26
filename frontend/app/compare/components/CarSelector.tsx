@@ -6,7 +6,6 @@ import { ChevronDownIcon, X } from "lucide-react"
 import CircularProgress from "@mui/joy/CircularProgress"
 import SpiderChart from "@/components/SpiderChart"
 
-// Define the Car type
 interface Car {
   id: number
   model: string
@@ -35,7 +34,10 @@ const spiderData = [
   { category: "Handling", value: 100, fullMark: 100 },
 ]
 
-export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: string) => void }) {
+export default function CarSelector({
+  onCarSelect,
+  onRemove,
+}: { onCarSelect: (carName: string) => void; onRemove: () => void }) {
   const [selectedCar, setSelectedCar] = useState(cars[0])
   const [query, setQuery] = useState("")
 
@@ -47,10 +49,13 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
         })
 
   return (
-    <div className="w-80 p-4 flex flex-col relative bg-black/30 backdrop-blur-md rounded-lg">
-      <div className="absolute top-4 right-4">
-        <X color="#ffffff" strokeWidth={1} className="w-6 h-auto" />
-      </div>
+    <div className="w-full p-4 flex flex-col relative bg-gray-900/80 backdrop-blur-md rounded-lg transition-all duration-300 ease-in-out">
+      <button
+        onClick={onRemove}
+        className="absolute top-4 right-4 text-white hover:text-pink-400 transition-colors duration-200"
+      >
+        <X strokeWidth={1} className="w-6 h-auto" />
+      </button>
       <div className="absolute top-4 left-4">
         <CircularProgress
           determinate
@@ -66,8 +71,9 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
         alt="Car Image"
         width={1000}
         height={1000}
+        className="w-full h-auto object-contain"
       />
-      <div className="w-full grow border-2 border-white rounded-md my-1.5 h-32 p-2 text-white">
+      <div className="w-full grow border-2 border-white/20 rounded-md my-1.5 h-32 p-2 text-white bg-gray-800/50">
         [AI summary and sparkle placeholder]
       </div>
       <div className="mt-auto">
@@ -85,7 +91,7 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
               aria-label="Assignee"
               displayValue={(car: Car) => car?.name}
               onChange={(event) => setQuery(event.target.value)}
-              className={`w-full h-12 rounded-lg border-none bg-white/5 py-1.5 pr-8 pl-3 text-sm/6 text-white focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
+              className="w-full h-12 rounded-lg border-none bg-gray-800/50 py-1.5 pr-8 pl-3 text-sm/6 text-white focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
             />
             <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
               <ChevronDownIcon className="size-4 fill-white/60 group-data-[hover]:fill-white" />
@@ -93,7 +99,7 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
           </div>
           <ComboboxOptions
             anchor="bottom"
-            className="w-72 mt-1 rounded-xl border border-white/5 bg-white/5 backdrop-blur-xl p-1 [--anchor-gap:var(--spacing-1)] empty:invisible transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
+            className="w-full mt-1 rounded-xl border border-white/5 bg-gray-800/90 backdrop-blur-xl p-1 [--anchor-gap:var(--spacing-1)] empty:invisible transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 max-h-60 overflow-auto scrollbar-hide"
           >
             {filteredCars.map((car) => (
               <ComboboxOption

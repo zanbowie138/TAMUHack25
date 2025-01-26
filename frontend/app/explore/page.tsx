@@ -154,8 +154,7 @@ export default function BudgetPage() {
         onClick={() => router.push('/')} 
         className="absolute top-8 left-8 flex items-center text-gray-300 hover:text-white"
       >
-        <ChevronLeft className="w-5 h-5 mr-1" />
-        Back to Home
+        
       </motion.button>
 
       <Header />

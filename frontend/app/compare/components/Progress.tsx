@@ -1,5 +1,5 @@
-import React from "react";
-import CircularProgress from "@mui/joy/CircularProgress";
+import React from "react"
+import CircularProgress from "@mui/joy/CircularProgress"
 
 export default function Progress({ value }: { value: number }) {
   return (
@@ -9,9 +9,11 @@ export default function Progress({ value }: { value: number }) {
       sx={{
         "--CircularProgress-trackThickness": "3px",
         "--CircularProgress-progressThickness": "3px",
+        color: "white",
       }}
     >
-      <div className="text-lg font-medium">{value}</div>
+      <div className="text-lg font-medium text-white">{value}</div>
     </CircularProgress>
-  );
+  )
 }
+
