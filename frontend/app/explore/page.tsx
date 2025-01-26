@@ -19,6 +19,7 @@ interface CarOption {
   mpg: string;
   year: number;
   engineType: string;
+  matchScore: number;
 }
 
 // TODO LIST:
@@ -58,12 +59,48 @@ function ExploreContent() {
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('price-low');
+  
+  // Add score weights state
+  const [scoreWeights, setScoreWeights] = useState({
+    base: 0.4,
+    price: 0.2,
+    mpg: 0.3,
+    year: 0.1
+  });
 
-  const car_models = ['prius', 'camry', 'corolla', 'highlander', 'rav4', 'sienna', 'tacoma', 'tundra']
-  const car_years = ['2025', '2024', '2023', '2022', '2021', '2020']
+  const car_models = ['prius', 'camry', 'corolla', 'highlander', 'rav4', 'sienna', 'tacoma', 'tundra'];
+  const car_years = ['2025', '2024', '2023', '2022', '2021', '2020'];
 
   const [cars, setCars] = useState<CarOption[]>([]);
 
+  // Updated calculation function
+  const calculateMatchScore = (car: CarOption) => {
+    let score = scoreWeights.base;
+    score += (car.price / 50000) * scoreWeights.price; // Normalized price
+    score += (Number(car.mpg) / 60) * scoreWeights.mpg; // Normalized MPG
+    score += ((car.year - 2020) / 5) * scoreWeights.year; // Normalized year
+    return Math.round(score * 100); // Convert to percentage
+  };
+
+  // Add effect to recalculate scores when weights change
+  useEffect(() => {
+    if (cars.length > 0) {
+      console.log('Recalculating scores with weights:', scoreWeights);
+      const updatedCars = cars.map(car => ({
+        ...car,
+        matchScore: calculateMatchScore(car)
+      }));
+      setCars(updatedCars);
+    }
+  }, [scoreWeights]); // Remove cars.length dependency to prevent potential loops
+
+  // Add a debug log for cars updates
+  useEffect(() => {
+    console.log('Cars updated:', cars.map(car => ({
+      model: car.model,
+      score: car.matchScore
+    })));
+  }, [cars]);
 
   // Fetch car data for each model and year combination
   useEffect(() => {
@@ -82,7 +119,8 @@ function ExploreContent() {
                 features: [],
                 mpg: data.car_data[6] + "", // Default MPG, should be updated with actual data
                 year: parseInt(year),
-                engineType: "Gas" // Default engine type, should be updated with actual data
+                engineType: "Gas", // Default engine type, should be updated with actual data
+                matchScore: 75
               });
             }
           } catch (error) {
@@ -107,30 +145,18 @@ function ExploreContent() {
   const handleFilterToggle = (filter: string) => 
     setSelectedFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
 
-  const filterCar = (car: CarOption) => {
-    if (selectedFilters.length === 0) return true;
-    return selectedFilters.some(filter => {
-      switch(filter) {
-        case 'Hybrid/Electric': return car.engineType === 'Hybrid' || car.engineType === 'Electric';
-        case 'High MPG': return Number(car.mpg.split('/')[0]) > 30;
-        case 'Latest Models': return car.year >= 2024;
-        default: return true;
-      }
-    });
-  };
 
   const sortCars = (a: CarOption, b: CarOption) => {
     switch(sortBy) {
       case 'price-low': return a.price - b.price;
       case 'price-high': return b.price - a.price;
-      case 'mpg': return Number(b.mpg.split('/')[0]) - Number(a.mpg.split('/')[0]);
+      case 'mpg': return Number(b.mpg) - Number(a.mpg);8
       default: return 0;
     }
   };
 
   const filteredCars = cars
     .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
-    .filter(filterCar)
     .sort(sortCars);
 
   const formatPrice = (price: number) => `$${price.toLocaleString()}`;
@@ -187,24 +213,39 @@ function ExploreContent() {
             </div>
 
             <div className="mb-8">
-              <h2 className="text-2xl mb-4">Filters</h2>
-              <div className="space-y-2">
-                {filterOptions.map(filter => (
-                  <motion.button
-                    key={filter}
-                    onClick={() => handleFilterToggle(filter)}
-                    variants={animations.filter}
-                    animate={selectedFilters.includes(filter) ? "active" : "inactive"}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`w-full py-2 px-4 rounded ${
-                      selectedFilters.includes(filter) ? 'bg-[#D1B8E1] text-white' : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  >
-                    {filter}
-                  </motion.button>
+              <h2 className="text-2xl mb-4">Score Weights</h2>
+              <div className="space-y-4">
+                {Object.entries(scoreWeights).map(([key, value]) => (
+                  <div key={key} className="flex flex-col">
+                    <label className="text-gray-300 mb-1 capitalize">{key}</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={value}
+                      onChange={(e) => setScoreWeights(prev => ({
+                        ...prev,
+                        [key]: parseFloat(e.target.value)
+                      }))}
+                      className="w-full"
+                    />
+                    <span className="text-sm text-gray-400">{value}</span>
+                  </div>
                 ))}
               </div>
+              
+              {/* Test button */}
+              <button
+                onClick={() => setScoreWeights(prev => ({
+                  ...prev,
+                  price: 0.3,
+                  mpg: 0.4
+                }))}
+                className="mt-4 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+              >
+                Test Weight Change
+              </button>
             </div>
 
             <div>
@@ -237,7 +278,9 @@ function ExploreContent() {
               className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
             >
               <AnimatePresence>
-                {cars.map(CarTile)}
+                {filteredCars.map(car => (
+                  <CarTile key={`${car.model}-${car.year}`} car={car} />
+                ))}
               </AnimatePresence>
             </motion.div>
           </div>
