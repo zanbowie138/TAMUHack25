@@ -1,8 +1,33 @@
+'use client'
 import React from "react"
-import Link from "next/link"
+import { useRouter, usePathname } from "next/navigation"
 import { ChevronUp } from "lucide-react"
 
 const FooterComponent = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const scrollToMiddle = () => {
+    if (pathname !== '/') {
+      router.push('/');
+      
+      // Delay to ensure page load before scrolling
+      setTimeout(() => {
+        const pageHeight = document.documentElement.scrollHeight;
+        window.scrollTo({ 
+          top: pageHeight / 2, 
+          behavior: "smooth" 
+        });
+      }, 300);
+    } else {
+      const pageHeight = document.documentElement.scrollHeight;
+      window.scrollTo({ 
+        top: pageHeight / 2, 
+        behavior: "smooth" 
+      });
+    }
+  }
+
   return (
     <footer className="bg-[#1C1C1C] text-gray-200 py-8">
       <div className="max-w-6xl mx-auto px-4 flex justify-between items-end">
@@ -23,19 +48,28 @@ const FooterComponent = () => {
         <nav>
           <ul className="flex space-x-6">
             <li>
-              <Link href="/" className="text-gray-200 transition-colors opacity-50 hover:opacity-100 hover:underline">
-                Home
-              </Link>
+              <button 
+                onClick={scrollToMiddle}
+                className="text-gray-200 transition-colors opacity-50 hover:opacity-100 hover:underline"
+              >
+                About
+              </button>
             </li>
             <li>
-              <Link href="/finance" className="text-gray-200 transition-colors opacity-50 hover:opacity-100 hover:underline">
-                Financial Page
-              </Link>
+              <button 
+                onClick={() => router.push('/explore')}
+                className="text-gray-200 transition-colors opacity-50 hover:opacity-100 hover:underline"
+              >
+                Explore
+              </button>
             </li>
             <li>
-              <Link href="/compare" className="text-gray-200 transition-colors opacity-50 hover:opacity-100 hover:underline">
-                Comparison Page
-              </Link>
+              <button 
+                onClick={() => router.push('/compare')}
+                className="text-gray-200 transition-colors opacity-50 hover:opacity-100 hover:underline"
+              >
+                Comparison
+              </button>
             </li>
           </ul>
         </nav>
