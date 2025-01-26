@@ -1,8 +1,38 @@
 import os
 import pickle
 from db import Database
-from scrape import Review
-from spec_scrape import CarData
+
+class Review:
+    def __init__(self, title, car_name, car_year, review_text, rating):
+        self.title = title  # Review title
+        self.car_name = car_name  # Name of the car (e.g., "Toyota Prius")
+        self.car_year = car_year  # Year of the car (e.g., 2023)
+        self.review_text = review_text  # Review text
+        self.rating = rating  # Rating (out of 5)
+
+    def convert_to_tuple(self):
+        return (self.car_name, self.car_year, self.title, self.review_text, self.rating)
+
+    def __str__(self):
+        return f"{self.title} - {self.car_name} {self.car_year} - {self.rating}/5 stars\n{self.review_text}"
+
+class CarData:
+    def __init__(self, car_model, car_year, msrp, horsepower, mpg, num_seats, drive_type):
+        self.car_model = car_model
+        self.car_year = car_year
+        self.msrp = msrp
+        self.horsepower = horsepower
+        self.mpg = mpg
+        self.num_seats = num_seats
+        self.drive_type = drive_type
+
+    def convert_to_tuple(self):
+        return (self.car_model, self.car_year, self.msrp, self.horsepower, self.mpg, self.num_seats, self.drive_type)
+
+    def __str__(self):
+        return f"{self.car_model} {self.car_year} - MSRP: {self.msrp}, Horsepower: {self.horsepower}, MPG: {self.mpg}, Seats: {self.num_seats}, Drive Type: {self.drive_type}"
+
+
 
 
 def load_reviews_data(db_params, filepath, table_name):
