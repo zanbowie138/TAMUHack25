@@ -103,7 +103,7 @@ export default function SearchBar({ className }: SearchBarProps) {
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute w-full mt-2 bg-[#222222] opacity-100 rounded-md shadow-lg h-full overflow-y-auto z-[50] rounded-md border border-white/20">
+        <div className="absolute w-full mt-2 bg-[#222222] opacity-100 rounded-md shadow-lg h-max overflow-y-auto z-[50] rounded-md border border-white/20 custom-scrollbar">
           {suggestions.map((suggestion, index) => (
             <div
               key={index}

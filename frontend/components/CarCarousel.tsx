@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { models, years } from '@/config/CarList';
 import { Car } from '@/config/Car';
 import getImage from '@/utils/get_image';
@@ -41,7 +40,7 @@ export default function CarCarousel() {
 
   return (
     <motion.div 
-      className="relative w-full overflow-hidden pt-0 pb-15"
+      className="relative w-full overflow-hidden pt-0 pb-15 z-[10]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
