@@ -16,6 +16,9 @@ class CarData:
         self.num_seats = num_seats
         self.drive_type = drive_type
 
+    def convert_to_tuple(self):
+        return (self.car_model, self.car_year, self.msrp, self.horsepower, self.mpg, self.num_seats, self.drive_type)
+
     def __str__(self):
         return f"{self.car_model} {self.car_year} - MSRP: {self.msrp}, Horsepower: {self.horsepower}, MPG: {self.mpg}, Seats: {self.num_seats}, Drive Type: {self.drive_type}"
 
@@ -47,11 +50,11 @@ def main():
 
                 # Find the div with the class `price-amount` and get its text
                 price_div = driver.find_element(By.CLASS_NAME, "price-amount")
-                msrp = price_div.text
+                msrp = int(price_div.text.replace('$', '').replace(',', ''))
 
-                model = "highlander"
+                model = car
 
-                year = "2025"
+                year = year
 
                 # Locate the specific `div` containing the `svg > use` element with `xlink:href` containing "#fwd"
                 key_specs = driver.find_elements(By.CLASS_NAME, "key-spec")
@@ -67,7 +70,8 @@ def main():
                         if "#fwd" in xlink_href:  # Check if the string contains "#fwd"
                             drive_type = spec.find_element(By.TAG_NAME, "label").text  # Get the drive type text
                         if "#seat" in xlink_href:
-                            num_seats = spec.find_element(By.TAG_NAME, "label").text
+                            num_seats_text = spec.find_element(By.TAG_NAME, "label").text
+                            num_seats = int(num_seats_text.split()[0])
                         if "#mpg" in xlink_href:
                             mpg_text = spec.find_element(By.TAG_NAME, "label").text
                             mpg = int(''.join(filter(str.isdigit, mpg_text)))

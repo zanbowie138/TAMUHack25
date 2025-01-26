@@ -5,14 +5,17 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import { ChevronDownIcon, X } from "lucide-react"
 import CircularProgress from "@mui/joy/CircularProgress"
 import SpiderChart from "@/components/SpiderChart"
+import getImage from "@/utils/get_image"
+import { Car } from "@/config/Car"
+import { calculateActiveTickIndex } from "recharts/types/util/ChartUtils"
 
 // Define the Car type
-interface Car {
-  id: number
-  model: string
-  year: string
-  name: string
-}
+// interface Car {
+//   id: number
+//   model: string
+//   year: string
+//   name: string
+// }
 
 const cars: Car[] = []
 
@@ -21,7 +24,7 @@ const years = ["2025", "2024", "2023", "2022", "2021", "2020"]
 
 for (const model of models) {
   for (const year of years) {
-    cars.push({ id: cars.length, model: `${model}`, year: `${year}`, name: `${year} ${model}` })
+    cars.push(new Car(model, year))
   }
 }
 
@@ -43,7 +46,7 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
     query === ""
       ? cars
       : cars.filter((car) => {
-          return car.name.toLowerCase().includes(query.toLowerCase())
+          return car.model.toLowerCase().includes(query.toLowerCase())
         })
 
   return (
@@ -62,7 +65,7 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
       </div>
 
       <Image
-        src={`https://www.toyota.com/imgix/content/dam/toyota/jellies/relative/${selectedCar.year}/${selectedCar.model}/base.png`}
+        src={getImage(selectedCar)}
         alt="Car Image"
         width={1000}
         height={1000}
@@ -76,14 +79,14 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
           value={selectedCar}
           onChange={(value) => {
             setSelectedCar(value ?? cars[0])
-            onCarSelect(value?.name ?? cars[0].name)
+            onCarSelect(value?.model ?? cars[0].model)
           }}
           onClose={() => setQuery("")}
         >
           <div className="relative">
             <ComboboxInput
               aria-label="Assignee"
-              displayValue={(car: Car) => car?.name}
+              displayValue={(car: Car) => car?.model}
               onChange={(event) => setQuery(event.target.value)}
               className={`w-full h-12 rounded-lg border-none bg-white/5 py-1.5 pr-8 pl-3 text-sm/6 text-white focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
             />
@@ -95,13 +98,13 @@ export default function CarSelector({ onCarSelect }: { onCarSelect: (carName: st
             anchor="bottom"
             className="w-72 mt-1 rounded-xl border border-white/5 bg-white/5 backdrop-blur-xl p-1 [--anchor-gap:var(--spacing-1)] empty:invisible transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
           >
-            {filteredCars.map((car) => (
+            {filteredCars.map((car, index) => (
               <ComboboxOption
-                key={car.id}
+                key={index}
                 value={car}
                 className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10"
               >
-                <div className="text-sm/6 text-white">{car.name}</div>
+                <div className="text-sm/6 text-white">{car.displayString()}</div>
               </ComboboxOption>
             ))}
           </ComboboxOptions>

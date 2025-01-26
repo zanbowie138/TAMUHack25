@@ -50,6 +50,28 @@ class Database:
         finally:
             self.close()
 
+    def get_car_data(self, car, year):
+        try:
+            self.connect()
+            self.cursor.execute("SELECT * FROM cars WHERE car_model = %s AND car_year = %s", (car, year))
+            car_data = self.cursor.fetchone()
+            return car_data
+        except Exception as e:
+            print("Error getting car data:", e)
+            return None
+
+    def get_models_and_years(self):
+        try:
+            self.connect()
+            self.cursor.execute("SELECT DISTINCT car_model FROM cars")
+            models = [row[0] for row in self.cursor.fetchall()]
+            self.cursor.execute("SELECT DISTINCT car_year FROM cars")
+            years = [row[0] for row in self.cursor.fetchall()]
+            return models, years
+        except Exception as e:
+            print("Error getting models and years:", e)
+            return [], []
+
     def clear_table(self, table_name):
         try:
             self.connect()
@@ -117,6 +139,20 @@ class Database:
             self.conn.commit()
         except Exception as e:
             print("Error adding reviews in bulk:", e)
+        finally:
+            self.close()
+
+    def add_data_bulk(self, data):
+        try:
+            self.connect()
+            insert_query = sql.SQL("""
+                INSERT INTO cars (car_model, car_year, msrp, horsepower, mpg, num_seats, drive_type)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """)
+            self.cursor.executemany(insert_query, data)
+            self.conn.commit()
+        except Exception as e:
+            print("Error adding data in bulk:", e)
         finally:
             self.close()
 
