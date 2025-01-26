@@ -1,22 +1,21 @@
-import React from "react";
-import { useRouter } from "next/navigation"; // Import for routing
-import { ChevronRight } from "lucide-react";
-import SearchBar from "./SearchBar";
+"use client"
+
+import React from "react"
+import { useRouter } from "next/navigation"
+import { ChevronRight } from "lucide-react"
+import SearchBar from "./SearchBar"
 
 export default function LandingPage() {
-  const router = useRouter();
+  const router = useRouter()
 
   const handleExploreModels = () => {
-    router.push("/explore");
-  };
+    router.push("/explore")
+  }
 
   return (
     <main className="min-h-screen relative overflow-hidden font-poppins">
-      <div className="fixed inset-0 h-full z-[-1]">
-        <img src="/gradient.svg" alt="Gradient" className="object-cover w-full h-full opacity-75" />
-      </div>
-
-      <div className="relative z-10 flex flex-col items-center justify-center text-center pt-30">
+      {/* Content Layer */}
+      <div className="relative flex flex-col items-center justify-center text-center pt-30">
         <h1 className="text-[10rem] font-extralight mb-[-60px] text-white leading-tight">Find Your</h1>
         <h2 className="text-[11rem] font-medium bg-gradient-to-r from-white to-[#CFB4DF] text-transparent bg-clip-text leading-tight">
           Dream Car
@@ -43,5 +42,6 @@ export default function LandingPage() {
         </div>
       </div>
     </main>
-  );
+  )
 }
+

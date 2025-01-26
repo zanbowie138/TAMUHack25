@@ -1,5 +1,5 @@
-"use client"
-import React, { useState, useCallback, useEffect } from "react"
+'use client'
+import React, { useState, useCallback, useEffect, Suspense } from "react"
 import CarSelector from "./CarSelector"
 import SentimentFilter from "@/components/SentimentFilter"
 import { Plus } from "lucide-react"
@@ -27,16 +27,16 @@ const initialSentiments = [
   "handling",
 ]
 
-export default function SelectorGroup() {
+function SelectorGroupContent() {
   const searchParams = useSearchParams()
   const [selectedCars, setSelectedCars] = useState<Car[]>([])
   const [sentimentWeights, setSentimentWeights] = useState<Record<string, number>>(
-    Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, 1])),
+    Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, 1]))
   )
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams)
-    const carsParam = params.get('cars')
+    const params = new URLSearchParams(searchParams.toString())
+    const carsParam = params.get("cars")
     console.log("carsParam", carsParam)
     if (carsParam) {
       const initialCars = getCarFromUrl(carsParam)
@@ -44,16 +44,16 @@ export default function SelectorGroup() {
     } else {
       setSelectedCars([cars[0]])
     }
-  }, [])
-  
+  }, [searchParams])
+
   function updateURL() {
     const url = getCarUrl(selectedCars)
     console.log(selectedCars)
-    window.history.pushState({}, '', `?cars=${url}`)
+    window.history.pushState({}, "", `?cars=${url}`)
   }
 
   function handleCarChange(car: Car, index: number) {
-    setSelectedCars(prev => {
+    setSelectedCars((prev) => {
       const newCars = [...prev]
       newCars[index] = car
       return newCars
@@ -117,3 +117,10 @@ export default function SelectorGroup() {
   )
 }
 
+export default function SelectorGroup() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SelectorGroupContent />
+    </Suspense>
+  )
+}
