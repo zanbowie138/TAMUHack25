@@ -20,6 +20,11 @@ interface CarOption {
   engineType: string;
 }
 
+// TODO LIST:
+// 1. sort by match score
+// 2. add preference filter (economy, price, performance)
+// 3. auto adjust match score based on preference filter
+
 export default function Explore() {
   const router = useRouter();
   const [priceRange, setPriceRange] = useState([20000, 50000]);
@@ -45,9 +50,9 @@ export default function Explore() {
             if (data.car_data) {
               carData.push({
                 model: data.car_data[1],
-                price: parseInt(data.car_data[2]),
+                price: parseInt(data.car_data[4]),
                 features: [],
-                mpg: "30/35", // Default MPG, should be updated with actual data
+                mpg: 6 + "", // Default MPG, should be updated with actual data
                 year: parseInt(year),
                 engineType: "Gas" // Default engine type, should be updated with actual data
               });
