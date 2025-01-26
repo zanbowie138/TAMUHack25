@@ -105,7 +105,7 @@ export default function SelectorGroup() {
         <AnimatePresence>
           {selectedCars.map((car, index) => (
             <motion.div
-              key={`${car.model}-${car.year}-${index}`}
+              key={`${index}`}
               layout
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
