@@ -108,14 +108,15 @@ export default function Explore() {
   }, [selectedCars]);
 
   useEffect(() => {
-    if (cars.length > 0) {
+    if (scoreWeights) {
       const updatedCars = cars.map((car) => ({
         ...car,
         matchScore: calculateMatchScore(car),
       }));
       setCars(updatedCars);
     }
-  }, [, scoreWeights]);
+  }, [scoreWeights]);
+  
 
   const sortCars = (a: CarOption, b: CarOption) => {
     switch (sortBy) {
@@ -137,7 +138,10 @@ export default function Explore() {
     .sort(sortCars);
 
   const formatPrice = (price: number) => `$${price.toLocaleString()}`;
-
+  useEffect(() => {
+    console.log('Rendering slider with price range:', priceRange);
+  }, [priceRange]);
+  
   return (
     <div className="min-h-screen bg-[#1C1C1C] relative">
       <div className="fixed inset-0 h-full z-0">
@@ -196,12 +200,15 @@ export default function Explore() {
                       dotStyle={{
                         borderColor: "white",
                         backgroundColor: "white",
+                        borderWidth: 2,
+                        width: 20,
                       }}
                       activeDotStyle={{
                         borderColor: "white",
                         backgroundColor: "white",
+                        borderWidth: 2,
                       }}
-                      className="mb-4"
+                      className="mb-4 border-2 border-white"
                     />
                     <div className="flex justify-between text-lg text-gray-100">
                       <span>{formatPrice(priceRange[0])}</span>
