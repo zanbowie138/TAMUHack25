@@ -12,7 +12,7 @@ interface CarSelectorProps {
   cars: Car[]
   initialCar: Car
   onRemove: () => void
-  sentimentWeights: Record<string, number>
+  sentimentWeights: Record<string, number>;
   onCarChange: (car: Car) => void
 }
 
@@ -125,7 +125,15 @@ export default function CarSelector({ cars, initialCar, onRemove, sentimentWeigh
         />
 
         <div className="w-full grow border border-white/20 rounded-md my-4 h-32 p-2 text-white/80 bg-white/10 backdrop-blur-sm">
-          [AI summary and sparkle placeholder]
+          {(() => {
+            try {
+              const summaries = require('/public/car_summaries.json');
+              const carKey = `${selectedCar.model} ${selectedCar.year}`;
+              return summaries[carKey]?.sentiment || "No summary available";
+            } catch (e) {
+              return "Summary not available";
+            }
+          })()}
         </div>
 
         <SpiderChart data={spiderData} />

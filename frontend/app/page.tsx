@@ -1,28 +1,44 @@
-"use client";
+"use client"
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React from "react"
+import { motion } from "framer-motion"
+import Image from "next/image"
 
-import SmoothScroll from "@/components/SmoothScroll";
-import LandingPage from "@/components/LandingPage";
-import CarCarousel from "@/components/CarCarousel";
-import AboutSection from "@/components/MissionStatement";
-import DetailsComponent from "@/components/Details";
-import FooterComponent from "@/components/Footer";
+import SmoothScroll from "@/components/SmoothScroll"
+import LandingPage from "@/components/LandingPage"
+import CarCarousel from "@/components/CarCarousel"
+import AboutSection from "@/components/MissionStatement"
+import DetailsComponent from "@/components/Details"
+import FooterComponent from "@/components/Footer"
 import FixedHeader from "@/components/headers/FixedHeader"
+import Gradient from "/public/gradient.svg"
 
 export default function Home() {
-
   return (
     <SmoothScroll>
-      <div>
-        <div>
+      <div className="min-h-screen relative overflow-hidden font-poppins">
+        {/* Background color layer */}
+        <div className="fixed inset-0 z-0 bg-[#1C1C1C]"></div>
+
+        {/* Gradient layer */}
+        <div className="fixed inset-0 z-10">
+          <Image
+            src={Gradient || "/placeholder.svg"}
+            alt="Gradient"
+            layout="fill"
+            objectFit="cover"
+            className="opacity-75"
+            priority
+          />
+        </div>
+
+        {/* Content layer */}
+        <div className="relative z-20">
           <FixedHeader />
-          {/*The Navbar for the Home Page is IN the landing page component */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 3, ease: "easeInOut" }}
+            transition={{ duration: 1, ease: "easeInOut" }}
           >
             <LandingPage />
           </motion.div>
@@ -31,11 +47,8 @@ export default function Home() {
           <DetailsComponent />
           <FooterComponent />
         </div>
-        </div>
-      <div className="relative"> 
-    
-        
       </div>
     </SmoothScroll>
-  );
+  )
 }
+
