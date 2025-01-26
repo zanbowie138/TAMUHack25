@@ -1,5 +1,7 @@
+import os
 import pickle
-from backend.db import Database
+from db import Database
+from scrape import Review
 
 
 def load_data(db_params, filepath):
@@ -18,6 +20,7 @@ def load_data(db_params, filepath):
     db.close()
 
 def main():
+
     db_params = {
         "dbname": "test_db",
         "user": "postgres",
@@ -26,6 +29,9 @@ def main():
         "port": 5433
     }
 
-    load_data(db_params, "db.pickle")
+    # Construct the relative path to the db.pickle file
+    script_dir = os.path.dirname(__file__)
+    filepath = os.path.join(script_dir, 'db.pickle')
+    load_data(db_params, filepath)
 
 main()
