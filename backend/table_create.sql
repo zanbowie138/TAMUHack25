@@ -1,6 +1,6 @@
 -- Database: test_db
 
-DROP DATABASE IF EXISTS test_db;
+-- DROP DATABASE IF EXISTS test_db;
 
 CREATE DATABASE test_db
     WITH
@@ -17,6 +17,7 @@ CREATE TABLE cars
 (
     car_id   SERIAL PRIMARY KEY,    -- Unique identifier for each car
     car_name VARCHAR(100) NOT NULL, -- Name of the car (e.g., "Corolla")
+    car_year INT NOT NULL,          -- Year of the car (e.g., 2020)
     UNIQUE (car_name)               -- Ensure car names are unique
 );
 
