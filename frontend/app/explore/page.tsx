@@ -1,33 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState } from 'react';
 import Slider from 'rc-slider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 import 'rc-slider/assets/index.css';
-import Header from '@/components/headers/BlockHeader';
-import { useRouter } from 'next/navigation';
-import getImage from '@/utils/get_image';
-import CarTile from './components/CarTile';
 
 interface CarOption {
   model: string;
   price: number;
+  image: string;
   features: string[];
   mpg: string;
   year: number;
   engineType: string;
-  matchScore: number;
 }
 
-// TODO LIST:
-// 1. sort by match score
-// 2. add preference filter (economy, price, performance)
-// 3. auto adjust match score based on preference filter
-
-export default function Explore() {
-  const router = useRouter();
+export default function BudgetPage() {
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('price-low');
@@ -142,20 +131,41 @@ export default function Explore() {
     .filter(car => car.price >= priceRange[0] && car.price <= priceRange[1])
     .sort(sortCars);
 
-  const formatPrice = (price: number) => `$${price.toLocaleString()}`;
+  const formatPrice = (price: number) => {
+    return `$${price.toLocaleString()}`;
+  };
 
-  const animations = {
-    container: {
-      hidden: { opacity: 0 },
-      visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
+  const filterVariants = {
+    active: {
+      backgroundColor: "#D1B8E1",
+      scale: 1.02,
+      transition: { type: "spring", stiffness: 300 }
     },
-    item: {
-      hidden: { y: 20, opacity: 0 },
-      visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
-    },
-    filter: {
-      active: { backgroundColor: "#D1B8E1", scale: 1.02, transition: { type: "spring", stiffness: 300 } },
-      inactive: { backgroundColor: "#374151", scale: 1 }
+    inactive: {
+      backgroundColor: "#374151",
+      scale: 1
     }
   };
 
@@ -167,14 +177,12 @@ export default function Explore() {
     >
       <motion.button 
         whileHover={{ x: -5 }}
-        onClick={() => router.push('/')} 
-        className="absolute top-8 left-8 flex items-center text-gray-300 hover:text-white"
+        onClick={() => window.history.back()} 
+        className="flex items-center text-gray-300 hover:text-white mb-8"
       >
         <ChevronLeft className="w-5 h-5 mr-1" />
         Back to Home
       </motion.button>
-
-      <Header />
 
       <motion.h1 
         initial={{ y: -20, opacity: 0 }}
@@ -211,53 +219,43 @@ export default function Explore() {
             </div>
 
             <div className="mb-8">
-              <h2 className="text-2xl mb-4">Score Weights</h2>
-              <div className="space-y-4">
-                {Object.entries(scoreWeights).map(([key, value]) => (
-                  <div key={key} className="flex flex-col">
-                    <label className="text-gray-300 mb-1 capitalize">{key}</label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.1"
-                      value={value}
-                      onChange={(e) => setScoreWeights(prev => ({
-                        ...prev,
-                        [key]: parseFloat(e.target.value)
-                      }))}
-                      className="w-full"
-                    />
-                    <span className="text-sm text-gray-400">{value}</span>
-                  </div>
+              <h2 className="text-2xl mb-4">Filters</h2>
+              <div className="space-y-2">
+                {filterOptions.map(filter => (
+                  <motion.button
+                    key={filter}
+                    onClick={() => handleFilterToggle(filter)}
+                    variants={filterVariants}
+                    animate={selectedFilters.includes(filter) ? "active" : "inactive"}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`w-full py-2 px-4 rounded ${
+                      selectedFilters.includes(filter)
+                        ? 'bg-[#D1B8E1] text-white'
+                        : 'bg-gray-700 hover:bg-gray-600'
+                    }`}
+                  >
+                    {filter}
+                  </motion.button>
                 ))}
               </div>
-              
-              {/* Test button */}
-              <button
-                onClick={() => setScoreWeights(prev => ({
-                  ...prev,
-                  price: 0.3,
-                  mpg: 0.4
-                }))}
-                className="mt-4 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-              >
-                Test Weight Change
-              </button>
             </div>
 
-            <div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
               <h2 className="text-2xl mb-4">Sort By</h2>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-600"
+                className="w-full bg-gray-700 text-white py-2 px-4 rounded transition-colors hover:bg-gray-600"
               >
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
                 <option value="mpg">Best MPG</option>
               </select>
-            </div>
+            </motion.div>
           </motion.div>
 
           <div className="lg:col-span-3">
@@ -266,18 +264,86 @@ export default function Explore() {
               animate={{ opacity: 1 }}
               className="mb-4 text-gray-300"
             >
-              {cars.length} vehicles found
+              {filteredCars.length} vehicles found
             </motion.div>
             
             <motion.div 
-              variants={animations.container}
+              variants={containerVariants}
               initial="hidden"
               animate="visible"
               className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
             >
               <AnimatePresence>
-                {filteredCars.map(car => (
-                  <CarTile key={`${car.model}-${car.year}`} car={car} />
+                {filteredCars.map((car) => (
+                  <motion.div 
+                    key={car.model}
+                    variants={itemVariants}
+                    layout
+                    whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
+                    className="bg-gray-700 rounded-lg overflow-hidden shadow-lg"
+                  >
+                    <motion.div 
+                      className="h-48 bg-gray-600 relative"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        {car.model} Image
+                      </div>
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute top-2 right-2 bg-[#D1B8E1] text-black px-2 py-1 rounded text-sm"
+                      >
+                        {car.year}
+                      </motion.div>
+                    </motion.div>
+                    <div className="p-4">
+                      <h3 className="text-xl font-semibold mb-2">{car.model}</h3>
+                      <p className="text-[#98FB98] text-lg mb-3">{formatPrice(car.price)}</p>
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex items-center gap-4 mb-3 text-sm text-gray-300"
+                      >
+                        <span>MPG: {car.mpg}</span>
+                        <span>{car.engineType}</span>
+                      </motion.div>
+                      <ul className="text-sm text-gray-300">
+                        {car.features.map((feature, index) => (
+                          <motion.li 
+                            key={index}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="mb-1"
+                          >
+                            • {feature}
+                          </motion.li>
+                        ))}
+                      </ul>
+                      <div className="mt-4 flex gap-2">
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex-1 bg-gradient-to-r from-white to-[#D1B8E1] text-gray-800 py-2 px-4 rounded transition-colors hover:opacity-90"
+                        >
+                          Learn More
+                        </motion.button>
+                        <motion.button 
+                          whileHover={{ 
+                            scale: 1.05, 
+                            background: "linear-gradient(to right, white, #D1B8E1)",
+                            color: "rgb(31, 41, 55)" // dark gray for contrast
+                          }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex-1 border border-[#D1B8E1] text-[#D1B8E1] py-2 px-4 rounded transition-all"
+                        >
+                          Compare
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
                 ))}
               </AnimatePresence>
             </motion.div>
@@ -286,4 +352,4 @@ export default function Explore() {
       </div>
     </motion.div>
   );
-}
+} 

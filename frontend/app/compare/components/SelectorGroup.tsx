@@ -1,98 +1,82 @@
-import React, { useState } from "react";
-import CarSelector from "./CarSelector";
-import { CirclePlus } from "lucide-react";
-import { Car } from "@/config/Car";
+"use client"
+import React, { useState, useCallback } from "react"
+import CarSelector from "./CarSelector"
+import SentimentFilter from "@/components/SentimentFilter"
+import { Plus } from "lucide-react"
+import { Car } from "@/config/Car"
 
-const cars: Car[] = [];
-const models = [
-  "prius",
-  "camry",
-  "corolla",
-  "highlander",
-  "rav4",
-  "sienna",
-  "tacoma",
-  "tundra",
-];
-const years = ["2025", "2024", "2023", "2022", "2021", "2020"];
+const cars: Car[] = []
+const models = ["prius", "camry", "corolla", "highlander", "rav4", "sienna", "tacoma", "tundra"]
+const years = ["2025", "2024", "2023", "2022", "2021", "2020"]
 
 for (const model of models) {
   for (const year of years) {
-    cars.push(new Car(model, year));
+    cars.push(new Car(model, year))
   }
 }
 
-export default function SelectorGroup() {
-  const [selectors, setSelectors] = useState<Car[]>([new Car("prius", "2025")]);
+const initialSentiments = [
+  "performance",
+  "fuel efficiency",
+  "interior comfort",
+  "build quality",
+  "safety",
+  "technology",
+  "handling",
+]
 
-  const addSelector = () => {
-    if (selectors.length < 4) {
-      setSelectors([...selectors, new Car("prius", "2025")]);
+export default function SelectorGroup() {
+  const [selectedCars, setSelectedCars] = useState<Car[]>([])
+  const [sentimentWeights, setSentimentWeights] = useState<Record<string, number>>(
+    Object.fromEntries(initialSentiments.map((sentiment) => [sentiment, 1])),
+  )
+
+  const addCar = useCallback(() => {
+    if (selectedCars.length < 4) {
+      setSelectedCars((prev) => [...prev, cars[0]])
     }
-  };
+  }, [selectedCars])
+
+  const removeCar = useCallback((index: number) => {
+    setSelectedCars((prev) => prev.filter((_, i) => i !== index))
+  }, [])
+
+  const handleSentimentChange = useCallback((sentiment: string, value: number) => {
+    setSentimentWeights((prev) => ({ ...prev, [sentiment]: value }))
+  }, [])
 
   return (
-    <div>
-      <div className="flex flex-row w-full justify-center space-x-12">
-        {selectors.map((car, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <div className="bg-gray-800 rounded-lg p-4 w-full mb-4">
-              <h3 className="text-white text-xl font-semibold mb-4">Car {index + 1}</h3>
+    <div className="flex flex-col items-center w-full max-w-7xl mx-auto">
+      <h2 className="text-6xl font-light text-white mb-4">Select and Compare</h2>
+      <p className="text-lg text-gray-300 mb-8 max-w-2xl text-center">
+        Explore and compare up to four different car models side by side. Analyze their features, specifications, and
+        performance in detail.
+      </p>
 
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col">
-                  <label className="text-white text-sm mb-2">Model Year</label>
-                  <select 
-                    className="bg-white/5 text-white rounded-lg p-2 border border-white/20"
-                    value={car.year}
-                    onChange={(e) => {
-                      const newSelectors = [...selectors];
-                      newSelectors[index] = new Car(car.model, e.target.value);
-                      setSelectors(newSelectors);
-                    }}
-                  >
-                    {years.map((year) => (
-                      <option key={year}>{year}</option>
-                    ))}
-                  </select>
-                </div>
+      <SentimentFilter sentiments={initialSentiments} weights={sentimentWeights} onChange={handleSentimentChange} />
 
-                <div className="flex flex-col">
-                  <label className="text-white text-sm mb-2">Model</label>
-                  <select 
-                    className="bg-white/5 text-white rounded-lg p-2 border border-white/20"
-                    value={car.model}
-                    onChange={(e) => {
-                      const newSelectors = [...selectors];
-                      newSelectors[index] = new Car(e.target.value.toLowerCase(), car.year);
-                      setSelectors(newSelectors);
-                    }}
-                  >
-                    {models.map((model) => (
-                      <option key={model}>{model.charAt(0).toUpperCase() + model.slice(1)}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-            <CarSelector 
-              onCarSelect={(carName: string) => {
-                const newSelectors = [...selectors];
-                const [model, year] = carName.split(' ');
-                newSelectors[index] = new Car(model.toLowerCase(), year);
-                setSelectors(newSelectors);
-              }}
+      <div className="flex justify-center gap-4 w-full">
+        {selectedCars.map((car, index) => (
+          <div key={index} className={`w-1/${selectedCars.length} min-w-[200px] max-w-[300px] animate-fade-in`}>
+            <CarSelector
+              cars={cars}
+              initialCar={car}
+              onRemove={() => removeCar(index)}
+              sentimentWeights={sentimentWeights}
             />
           </div>
         ))}
-        {selectors.length < 4 ? (
-          <button onClick={addSelector}>
-            <CirclePlus color="#ffffff" strokeWidth={1} className="w-20 h-auto" />
-          </button>
-        ) : (
-          <></>
-        )}
       </div>
+
+      {selectedCars.length < 4 && (
+        <button
+          onClick={addCar}
+          className="mt-8 flex items-center justify-center w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
+        >
+          <Plus size={32} color="#ffffff" />
+        </button>
+      )}
     </div>
-  );
+  )
 }
+
