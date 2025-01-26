@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import React from "react"
-import Image from "next/image"
-import Gradient2 from "/public/gradient2.svg"
+import React, { Suspense } from "react";
+import Image from "next/image";
+import Gradient2 from "/public/gradient2.svg";
 
-import BlockHeader from "@/components/headers/BlockHeader"
-import SelectorGroup from "./components/SelectorGroup"
-import FooterComponent from "@/components/Footer"
-import SmoothScroll from "@/components/SmoothScroll"
+import BlockHeader from "@/components/headers/BlockHeader";
+import SelectorGroup from "./components/SelectorGroup";
+import FooterComponent from "@/components/Footer";
+import SmoothScroll from "@/components/SmoothScroll";
 
 export default function Compare() {
   return (
@@ -33,13 +33,14 @@ export default function Compare() {
           <BlockHeader />
 
           <main className="container mx-auto px-4 py-8">
-            <SelectorGroup />
+            <Suspense fallback={<div>Loading...</div>}>
+              <SelectorGroup />
+            </Suspense>
           </main>
 
           <FooterComponent />
         </div>
       </div>
     </SmoothScroll>
-  )
+  );
 }
-
