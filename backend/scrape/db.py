@@ -49,6 +49,18 @@ class Database:
             return None
         finally:
             self.close()
+            
+    def get_models_and_years(self):
+        try:
+            self.connect()
+            self.cursor.execute("SELECT DISTINCT model FROM cars")
+            models = [row[0] for row in self.cursor.fetchall()]
+            self.cursor.execute("SELECT DISTINCT year FROM cars")
+            years = [row[0] for row in self.cursor.fetchall()]
+            return models, years
+        except Exception as e:
+            print("Error getting models and years:", e)
+            return [], []
 
     def clear_table(self, table_name):
         try:

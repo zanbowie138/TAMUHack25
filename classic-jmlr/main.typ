@@ -59,13 +59,28 @@ We integrate Arize's Phoenix framework for comprehensive monitoring:
 - Error tracking and alerting
 
 The monitoring setup includes:
+- Real-time performance dashboards
+- Custom metric tracking for model latency and throughput
+- Automated alerting thresholds for error rates
+- Historical trend analysis for model drift detection
+- Integration with existing DevOps tooling
 
 
 == OpenAI Integration
 The system leverages OpenAI's language models through a structured interface, ensuring consistent output formatting using Pydantic models:
+- Custom ReviewAnalysis schema for structured outputs
+- Zero-temperature inference for deterministic results
+- Prompt templating for consistent model interactions
+- Error handling with graceful fallbacks
+- Rate limiting and request batching for efficiency
 
 == Arize Monitoring
 We implement comprehensive monitoring using Arize's Phoenix framework:
+- Model performance tracking across different review categories
+- Latency and throughput metrics for each analysis stage
+- Input/output distribution monitoring
+- Custom dashboards for sentiment analysis accuracy
+- Automated reporting for stakeholder updates
 
 #set math.equation(numbering: none)  // There are no numbers in sample paper.
 #blindmathpaper

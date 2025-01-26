@@ -76,10 +76,10 @@ export default function SelectorGroup() {
               </div>
             </div>
             <CarSelector 
-              car={car}
-              onRemove={() => {
+              onCarSelect={(carName: string) => {
                 const newSelectors = [...selectors];
-                newSelectors.splice(index, 1);
+                const [model, year] = carName.split(' ');
+                newSelectors[index] = new Car(model.toLowerCase(), year);
                 setSelectors(newSelectors);
               }}
             />

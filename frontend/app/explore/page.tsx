@@ -5,6 +5,8 @@ import Slider from 'rc-slider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 import 'rc-slider/assets/index.css';
+import Header from '@/components/headers/BlockHeader';
+import { useRouter } from 'next/navigation';
 
 interface CarOption {
   model: string;
@@ -17,6 +19,7 @@ interface CarOption {
 }
 
 export default function BudgetPage() {
+  const router = useRouter();
   const [priceRange, setPriceRange] = useState([20000, 50000]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('price-low');
@@ -145,14 +148,17 @@ export default function BudgetPage() {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8"
     >
+      
       <motion.button 
         whileHover={{ x: -5 }}
-        onClick={() => window.history.back()} 
-        className="flex items-center text-gray-300 hover:text-white mb-8"
+        onClick={() => router.push('/')} 
+        className="absolute top-8 left-8 flex items-center text-gray-300 hover:text-white"
       >
         <ChevronLeft className="w-5 h-5 mr-1" />
         Back to Home
       </motion.button>
+
+      <Header />
 
       <motion.h1 
         initial={{ y: -20, opacity: 0 }}

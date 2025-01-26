@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
-import CarSelector from "./components/CarSelector";
 import BlockHeader from "@/components/headers/BlockHeader"
-import Image from "next/image";
 import SelectorGroup from "./components/SelectorGroup";
 import FooterComponent
  from "@/components/Footer";
