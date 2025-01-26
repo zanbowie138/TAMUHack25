@@ -9,7 +9,7 @@ interface SentimentFilterProps {
   onFilterChange: (selectedFilters: string[]) => void
 }
 
-const defaultFilters = ["performance", "fuel efficiency", "safety", "technology"]
+const defaultFilters = ["performance", "fuel efficiency", "cost", "year"]
 
 export default function SentimentFilter({ sentiments, weights, onChange, onFilterChange }: SentimentFilterProps) {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -83,7 +83,7 @@ export default function SentimentFilter({ sentiments, weights, onChange, onFilte
                   type="range"
                   id={sentiment}
                   min={0}
-                  max={2}
+                  max={1}
                   step={0.1}
                   value={weights[sentiment]}
                   onChange={(e) => onChange(sentiment, Number.parseFloat(e.target.value))}
